@@ -1,0 +1,16 @@
+root                     = true
+
+[*]
+tab_width                = 4
+ident_size               = 4
+max_line_length          = 80
+end_of_line              = lf
+charset                  = utf-8
+ident_style              = space
+insert_final_newline     = true
+
+[*.{html, css, js, json, .blade.php, package.json,.travis.yml, composer.json}]
+ident_size               = 2
+
+[*.md]
+trim_trailing_whitespace = false
