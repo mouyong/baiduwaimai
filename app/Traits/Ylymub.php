@@ -470,7 +470,7 @@ class Ylymub
         // 商品
         foreach ($data['product'] as $num => $datum) {
             $msg = '';
-            $con = '<FS><center>'.'---'. ($num + 1) .'号口袋'.'---'.'</center></FS>';
+            $con = '<center>'.'---'. ($num + 1) .'号口袋'.'---'.'</center>';
 
             foreach ($datum as $item) {
                 $msg .= $item;

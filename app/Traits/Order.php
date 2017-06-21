@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use App\Jobs\PrintOrder;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Validation\Rules\In;
 
 trait Order
 {
@@ -32,8 +33,8 @@ trait Order
     {
         $params = $this->buildCmd('order.confirm', $ticket, compact('order_id'));
         // todo 修改成真正的接单
-        \Log::info($params);
-//        return $this->zttp->post(bd_api_url(), $params)->json();
+//        \Log::info($params);
+        return $this->zttp->post(bd_api_url(), $params)->json();
     }
 
     /**
@@ -48,6 +49,10 @@ trait Order
         $body['order_id'] = Input::get('order_id');
         $body['type'] = $type;
         $body['reason '] = $reason;
+        $this->source = Input::get('source');
+
+        $shopInfo = self::shopInfoFromCache($this->source);
+        $this->secret = $shopInfo['baidu_secret_key'];
 
         $this->res = $this->zttp->post(
             bd_api_url(),
@@ -77,15 +82,18 @@ trait Order
 
         if ($cmd === 'order.status.push') {
             $body = json_decode(Input::get('body'), true);
+            $this->source = Input::get('source');
+
+            $shopInfo = self::shopInfoFromCache($this->source);
+            $this->secret = $shopInfo['baidu_secret_key'];
+
             $order_id = $body['order_id'];
             $order_status = (int) $body['status'];
 
             // 从百度获取订单详情
             $detail = self::detail($order_id);
 
-            $shopInfo = self::shopInfoFromCache();
-
-            // todo 根据 shop info 的 商店字体设置，是否为默认，自定义字体大小，进行文本格式化。
+            // 根据 shop info 的 商店字体设置，是否为默认，自定义字体大小，进行文本格式化。
             // 获取格式化后的内容
             $content = Ylymub::getFormatMsg(
                 // 从订单详情中获取需要格式化的数据
@@ -96,7 +104,7 @@ trait Order
             switch ($order_status) {
                 // 订单已确认
                 case 5:
-                    dispatch(new PrintOrder($this->order_id, $content));
+                    dispatch(new PrintOrder(Input::get('source'), $order_id, $content));
                     break;
             }
 

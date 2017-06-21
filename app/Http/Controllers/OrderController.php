@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Contracts\OrderInterface;
 use App\Jobs\ConfirmOrder;
+use App\Jobs\CreateOrder;
 use App\Traits\Order;
 use Illuminate\Support\Facades\Input;
 
@@ -28,14 +29,14 @@ class OrderController extends Controller implements OrderInterface
 
         $this->secret  = $shop['baidu_secret_key'];
 
-        // TODO 订单打印流水号 记录数据库
         $source_order_id = uuid();
 
         // 获取数据
         $body = json_decode(Input::get('body'));
 
+        \Log::info($shop);
         // 不手动接单
-        if ($shop['order_confirm'] != 'yes') {
+        if ($shop['order_confirm'] == 'no') {
             $this->dispatch(new ConfirmOrder($body->order_id, Input::all()));
         }
 
