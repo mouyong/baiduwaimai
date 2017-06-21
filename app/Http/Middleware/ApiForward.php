@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 
+use Illuminate\Database\Eloquent\Model;
 class ApiForward
 {
     /**
