@@ -22,9 +22,10 @@ interface OrderInterface
      * 当接受到有订单后，进行订单确认
      *
      * @param string $order_id
+     * @param string $ticket
      * @return mixed
      */
-    public function confirm(string $order_id);
+    public function confirm(string $order_id, string $ticket);
 
     /**S
      * 订单取消
@@ -45,16 +46,7 @@ interface OrderInterface
     /**
      * 订单详情
      *
-     * @param string $order_id
      * @return mixed
      */
-    public function detail(string $order_id);
-
-    /**
-     * 订单打印
-     *
-     * @param array $detail
-     * @return mixed
-     */
-    public function print(array $detail);
+    public function detail();
 }

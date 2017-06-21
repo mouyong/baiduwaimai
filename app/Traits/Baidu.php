@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use Illuminate\Support\Facades\Input;
 use Zttp\Zttp;
 
 trait Baidu
@@ -10,13 +11,12 @@ trait Baidu
     protected $source;
     protected $encrypt;
     protected $version;
+
     protected $timestamp;
     protected $zttp;
 
-    protected function set()
+    protected function set_baidu()
     {
-        $this->secret  = bd_secret();
-        $this->source  = bd_source();
         $this->encrypt = '';
         $this->version = 3;
 
@@ -32,7 +32,7 @@ trait Baidu
      * @param int $encode  json_encode 转码
      * @return mixed
      */
-    protected function buildCmd(string $cmd, string $ticket, array $body, $encode = 1)
+    protected function buildCmd($cmd, $ticket, array $body, $encode = 1)
     {
         $req['cmd']       = $cmd;
         $req['source']    = $this->source;
@@ -45,7 +45,7 @@ trait Baidu
         $req['body']      = json_encode($req['body']);
         ksort($req);
 
-        $req['sign']      = gen_sign($req);
+        $req['sign']      = gen_baidu_sign($req);
 
         $req['body']      = $encode ? $req['body'] : json_decode($req['body'], 1);
         return $req;
@@ -62,14 +62,7 @@ trait Baidu
      * @param string $error
      * @return mixed
      */
-    public function buildRes(
-        string $cmd,
-        string $ticket,
-        $data = array(),
-        $encode = 1,
-        $errno = 0,
-        $error = 'success'
-    ) {
+    public function buildRes($cmd, $ticket, $data = array(), $encode = 1, $errno = 0, $error = 'success') {
         $body['errno'] = $errno;
         $body['error'] = $error;
         $body['data']  = $data;
