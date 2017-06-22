@@ -221,7 +221,7 @@ trait Order
                     foreach ($product['product_features'] as $product_features) {
                         $str .= $product_features['option'] . '、';
                     }
-                    $str .= ')';
+                    $str = rtrim($str, '、') . ')';
                 }
                 $str .= '[]';
 
