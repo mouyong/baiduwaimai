@@ -177,8 +177,14 @@ trait Order
         $data['address'] = htmlspecialchars_decode($tmpData['user']['address']);
         $data['info'] = $first_name . $nickname . ': ' . offset($tmpData['user']['phone'], [3, 7]);
 
+        // 用餐人数
+        if (empty($tmpData['order']['meal_num'])) {
+            $userNum = 1;
+        } else {
+            $userNum = $tmpData['order']['meal_num'];
+        }
         // 备注信息
-        $data['remark'] = '订单备注：[用餐人数]' . $tmpData['order']['meal_num'] . '人；';
+        $data['remark'] = '订单备注：[用餐人数]' . $userNum . '人；';
         $data['remark'] .= $tmpData['order']['remark'];
 
         return $data;
@@ -215,7 +221,7 @@ trait Order
                     foreach ($product['product_features'] as $product_features) {
                         $str .= $product_features['option'] . '、';
                     }
-                    $str .= ')';
+                    $str = rtrim($str, '、') . ')';
                 }
                 $str .= '[]';
 
