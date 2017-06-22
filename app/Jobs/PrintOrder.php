@@ -18,6 +18,7 @@ class PrintOrder implements ShouldQueue
     private $order_id;
     private $content;
     private $source;
+    private $key;
 
     /**
      * Create a new job instance.
@@ -26,11 +27,12 @@ class PrintOrder implements ShouldQueue
      * @param string $order_id
      * @param string $content
      */
-    public function __construct($source, $order_id, $content = '')
+    public function __construct($source, $order_id, $content = '', $key = 0)
     {
         $this->source = $source;
         $this->order_id = $order_id;
         $this->content = $content;
+        $this->key = $key;
     }
 
     /**
@@ -42,7 +44,7 @@ class PrintOrder implements ShouldQueue
     {
         $shopInfo = self::shopInfoFromCache($this->source);
 
-        Printer::print($this->content, $shopInfo);
+        Printer::print($this->content, $shopInfo, $this->key);
 
         dispatch(new CreateOrder($this->order_id, $this->content, $shopInfo));
     }

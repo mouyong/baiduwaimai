@@ -11,9 +11,9 @@ trait Printer
      * @param string $content
      * @return mixed
      */
-    public static function print(string $content, $shopInfo)
+    public static function print(string $content, $shopInfo, $key = 0)
     {
-        $str = gen_y_sign_and_data($content, $shopInfo);
+        $str = gen_y_sign_and_data($content, $shopInfo, $key);
         $query = http_build_query($str);
         return self::sendCmd(y_api_url(), $query);
     }

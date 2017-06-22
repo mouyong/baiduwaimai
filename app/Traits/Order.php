@@ -103,18 +103,20 @@ trait Order
                         return false;
                     }
 
+                    // 获取需要转化的内容版本
+                    //
+                    // 遍历进行转化
+                    //
+                    // 遍历用户的所有终端，根据终端版本，传输转化完成后的内容进行打印
                     foreach ($shopInfo['machines'] as $key => $machine) {
                         $content = Ylymub::getFormatMsg(
                             // 从订单详情中获取需要格式化的数据
                             Order::getPrintData($detail),
-                            $shopInfo
+                            $shopInfo,
+                            $key
                         );
 
-                        if (!$content) {
-                            // todo 发邮件，通知没有绑定信息。
-                            return false;
-                        }
-                        dispatch(new PrintOrder(Input::get('source'), $order_id, $content));
+                        dispatch(new PrintOrder(Input::get('source'), $order_id, $content, $key));
                     }
 
                     break;
