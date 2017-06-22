@@ -180,7 +180,8 @@ trait Order
         $data['info'] = $first_name . $nickname . ': ' . offset($tmpData['user']['phone'], [3, 7]);
 
         // 备注信息
-        $data['remark'] = $tmpData['order']['remark'];
+        $data['remark'] = '订单备注：[用餐人数]' . $tmpData['order']['meal_num'] . '人；';
+        $data['remark'] .= $tmpData['order']['remark'];
 
         return $data;
     }
@@ -196,7 +197,30 @@ trait Order
         foreach ($tmpdata as $num => $item) {
             foreach ($item as $product) {
                 // 产品名称
-                $str = $product['product_name'] . '[]';
+                $str = $product['product_name'];
+                // 拼接规格
+                if (count($product['product_attr'])) {
+                    $str .= '(';
+                    foreach ($product['product_attr'] as $product_attr) {
+                        $str .= $product_attr['option'] . '、';
+                    }
+                    $str = rtrim($str, '、') . ')';
+                }
+
+                if (count($product['product_features'])) {
+                    if (!strstr($str, '(')) {
+                        $str .= '(';
+                    } else {
+                        $str = rtrim($str, ')') . '、';
+                    }
+
+                    foreach ($product['product_features'] as $product_features) {
+                        $str .= $product_features['option'] . '、';
+                    }
+                    $str .= ')';
+                }
+                $str .= '[]';
+
                 // 产品份数
                 $str .= 'x' . $product['product_amount'] . '[]';
                 // 产品份数所对应的总价
