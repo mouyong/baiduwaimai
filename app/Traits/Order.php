@@ -32,8 +32,6 @@ trait Order
     public function confirm(string $order_id, string $ticket)
     {
         $params = $this->buildCmd('order.confirm', $ticket, compact('order_id'));
-        // todo 修改成真正的接单
-//        \Log::info($params);
         return $this->zttp->post(bd_api_url(), $params)->json();
     }
 
