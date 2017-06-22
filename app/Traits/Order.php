@@ -141,13 +141,16 @@ trait Order
         return $res;
     }
 
-    public static function getPrintData($tmpData) {
+    public static function getPrintData($tmpData)
+    {
         $tmpData = $tmpData['body']['data'];
+
+        // 订单当日流水号
+        $data['order_index'] = $tmpData['order']['order_index'];
 
         // 头部信息
         $data['pay_type'] = ((int) $tmpData['order']['pay_type'] === 1) ? '--货到付款--' : '--在线支付--';
         // 付款类型 1 下线 2 在线 要改回来
-//        $data['pay_type'] = ((int) $tmpData['order']['pay_type'] === 1) ? '--在线支付--' : '--在线支付--';
         // 百度商户名称
         $data['shop_name'] = $tmpData['shop']['name'];
         // 下单时间

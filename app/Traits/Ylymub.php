@@ -418,6 +418,47 @@ class Ylymub
         return '\n' . $msg;
     }
 
+    public function setFontSize($shopInfo)
+    {
+        self::$font_size =  $shopInfo['fonts_setting'];
+
+        return $this;
+    }
+
+    /**
+     * 字体大小排版指令
+     */
+    public static function fs($option, $size, $version)
+    {
+        $per = 'FS';
+        $n = $per;
+        //新版
+        if ($version == 1) {
+            if ($size == 1) {
+                $FS1 = '';
+                $FS2 = '';
+            } else if ($size == 2) {
+
+                $FS1 = '<' . $n . '>';
+                $FS2 = '</' . $n . '>';
+            } else if ($size == 3) {
+                $FS1 = '<' . $n . '2' . '>';
+                $FS2 = '</' . $n . '2' . '>';
+            }
+            return $FS1 . $option . $FS2 . "\n";
+            //老版本
+        } else {
+            if ($size == 1) {
+                $FS = '';
+            } else {
+                $arr = TableFormat::mbStrSplit($option,32);
+                $FS = '@@2';
+                $option = implode('@@2',$arr);
+            }
+            return $FS . $option . "\n";
+        }
+    }
+
     /**
      * 获取格式化后的数据
      *
@@ -440,7 +481,7 @@ class Ylymub
         $br = '\r';
         $content = '';
 
-        $content .= '<FS2><center>** 百度 **</center></FS2>' . $br;
+        $content .= '<FS2><center>**#' . $data['order_index'] . ' 百度 **</center></FS2>' . $br;
         $content .= str_repeat('.',32) . $br;
         $content .= '<FS2><center>--' . $data['pay_type'] . '--</center></FS2>' . $br;
         $content .= '<FS><center>' . $data['shop_name'] . '</center></FS>' . $br;
@@ -497,46 +538,5 @@ class Ylymub
         $content = self::contentformate($content, $version);
 
         return $content;
-    }
-
-    public function setFontSize($shopInfo)
-    {
-        self::$font_size =  $shopInfo['fonts_setting'];
-
-        return $this;
-    }
-
-    /**
-     * 字体大小排版指令
-     */
-    public static function fs($option, $size, $version)
-    {
-        $per = 'FS';
-        $n = $per;
-        //新版
-        if ($version == 1) {
-            if ($size == 1) {
-                $FS1 = '';
-                $FS2 = '';
-            } else if ($size == 2) {
-
-                $FS1 = '<' . $n . '>';
-                $FS2 = '</' . $n . '>';
-            } else if ($size == 3) {
-                $FS1 = '<' . $n . '2' . '>';
-                $FS2 = '</' . $n . '2' . '>';
-            }
-            return $FS1 . $option . $FS2 . "\n";
-            //老版本
-        } else {
-            if ($size == 1) {
-                $FS = '';
-            } else {
-                $arr = TableFormat::mbStrSplit($option,32);
-                $FS = '@@2';
-                $option = implode('@@2',$arr);
-            }
-            return $FS . $option . "\n";
-        }
     }
 }

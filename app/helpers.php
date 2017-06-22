@@ -18,17 +18,17 @@ function array_explode($string, $delimiter = '.')
 
 function y_api_url()
 {
-    return env('yilianyun_print_api_url', 'http://open.10ss.net:8888');
+    return config('baidutakeout.yilianyun_print_api_url', 'http://open.10ss.net:8888');
 }
 
 function bd_api_url()
 {
-    return config('baidu_take_out_api_url', 'http://api.waimai.baidu.com/');
+    return config('baidutakeout.baidu_take_out_api_url', 'http://api.waimai.baidu.com/');
 }
 
 function bdwm_info_url()
 {
-    return config('baidu_shop_info_url', 'http://yilianyun.10ss.net/bdwm/bdwminfo');
+    return config('baidutakeout.baidu_shop_info_url', 'http://yilianyun.10ss.net/bdwm/bdwminfo');
 }
 
 /**

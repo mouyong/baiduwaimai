@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: baby
- * Date: 2017/6/14
- * Time: 18:08
- */
 
 namespace App\Traits;
 
@@ -21,8 +15,6 @@ trait Printer
     {
         $str = gen_y_sign_and_data($content, $shopInfo);
         $query = http_build_query($str);
-
-        \Log::info($str);
         return self::sendCmd(y_api_url(), $query);
     }
 

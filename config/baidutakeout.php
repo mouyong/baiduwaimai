@@ -1,6 +1,7 @@
 <?php
 
 return [
+    // 'yilianyun_print_api_url' => env('YILIANYUN_PRINT_API_URL', 'http://114.215.65.36:8888'),
     'yilianyun_print_api_url' => env('YILIANYUN_PRINT_API_URL', 'http://open.10ss.net:8888'),
 
     'baidu_take_out_api_url' => env('BAIDU_TAKE_OUT_API_URL', 'https://api.waimai.baidu.com'),

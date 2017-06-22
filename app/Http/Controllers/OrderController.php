@@ -49,7 +49,7 @@ class OrderController extends Controller implements OrderInterface
     public function __destruct()
     {
         if (isset($this->res)) {
-            dd($this->res->json());
+            // dd($this->res->json());
         }
     }
 }
