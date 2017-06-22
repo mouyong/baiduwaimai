@@ -16,46 +16,19 @@ function array_explode($string, $delimiter = '.')
     }
 }
 
+function y_api_url()
+{
+    return env('yilianyun_print_api_url', 'http://open.10ss.net:8888');
+}
+
 function bd_api_url()
 {
-    return env('BD_API_URL', 'http://api.waimai.baidu.com/');
+    return config('baidu_take_out_api_url', 'http://api.waimai.baidu.com/');
 }
 
 function bdwm_info_url()
 {
-    return env('BDWM_INFO_URL', 'http://10ss.app/bdwm/bdwminfo');
-}
-
-function bd_secret()
-{
-    return env('BD_SECRET', 'default');
-}
-
-function y_api_url()
-{
-    return env('Y_API_URL', 'http://open.10ss.net:8888');
-}
-
-function y_machine()
-{
-    return env('Y_MACHINE', null);
-}
-
-function y_parner()
-{
-    return env('Y_PARNER', null);
-}
-
-
-function y_ak()
-{
-    return env('Y_AK', null);
-}
-
-
-function y_msign()
-{
-    return env('Y_MSIGN', null);
+    return config('baidu_shop_info_url', 'http://yilianyun.10ss.net/bdwm/bdwminfo');
 }
 
 /**
