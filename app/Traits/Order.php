@@ -91,18 +91,32 @@ trait Order
             // 从百度获取订单详情
             $detail = self::detail($order_id);
 
-            // 根据 shop info 的 商店字体设置，是否为默认，自定义字体大小，进行文本格式化。
-            // 获取格式化后的内容
-            $content = Ylymub::getFormatMsg(
-                // 从订单详情中获取需要格式化的数据
-                Order::getPrintData($detail),
-                $shopInfo
-            );
-
             switch ($order_status) {
                 // 订单已确认
                 case 5:
-                    dispatch(new PrintOrder(Input::get('source'), $order_id, $content));
+
+                    // 根据 shop info 的 商店字体设置，是否为默认，自定义字体大小，进行文本格式化。
+                    // 获取格式化后的内容
+                    //
+                    if (empty($shopInfo['machines'])) {
+                        // todo 通知，未添加打印机。
+                        return false;
+                    }
+
+                    foreach ($shopInfo['machines'] as $key => $machine) {
+                        $content = Ylymub::getFormatMsg(
+                            // 从订单详情中获取需要格式化的数据
+                            Order::getPrintData($detail),
+                            $shopInfo
+                        );
+
+                        if (!$content) {
+                            // todo 发邮件，通知没有绑定信息。
+                            return false;
+                        }
+                        dispatch(new PrintOrder(Input::get('source'), $order_id, $content));
+                    }
+
                     break;
             }
 
