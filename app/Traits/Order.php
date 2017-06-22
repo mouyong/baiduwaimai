@@ -151,7 +151,7 @@ trait Order
         // 百度商户名称
         $data['shop_name'] = $tmpData['shop']['name'];
         // 下单时间
-        $data['confirm_time'] = '下单时间:' . date('Y年m月d日H时i分s秒', $tmpData['order']['confirm_time']);
+        $data['confirm_time'] = '下单时间:' . date('Y年m月d日H时i分', $tmpData['order']['confirm_time']);
         // 订单编号
         $data['order_id'] = '订单编号:' . $tmpData['order']['order_id'];
 
@@ -173,7 +173,7 @@ trait Order
         $nickname = ($tmpData['user']['gender'] === 1) ? '(先生)' : '(女士)';
 
         $data['user_fee'] = '订单总价:￥' . getNumber($tmpData['order']['user_fee']);
-        $data['address'] = $tmpData['user']['address'];
+        $data['address'] = htmlspecialchars_decode($tmpData['user']['address']);
         $data['info'] = $first_name . $nickname . ': ' . offset($tmpData['user']['phone'], [3, 7]);
 
         // 备注信息

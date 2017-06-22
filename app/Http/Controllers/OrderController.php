@@ -34,7 +34,7 @@ class OrderController extends Controller implements OrderInterface
         // 获取数据
         $body = json_decode(Input::get('body'));
 
-        \Log::info($shop);
+//        \Log::info($shop);
         // 不手动接单
         if ($shop['order_confirm'] == 'no') {
             $this->dispatch(new ConfirmOrder($body->order_id, Input::all()));

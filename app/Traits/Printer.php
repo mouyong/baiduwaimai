@@ -19,10 +19,11 @@ trait Printer
      */
     public static function print(string $content, $shopInfo)
     {
-        $query = http_build_query(gen_y_sign_and_data($content, $shopInfo));
+        $str = gen_y_sign_and_data($content, $shopInfo);
+        $query = http_build_query($str);
 
-//        \Log::info($query);
-        echo self::sendCmd(y_api_url(), $query);
+        \Log::info($str);
+        return self::sendCmd(y_api_url(), $query);
     }
 
     /**
