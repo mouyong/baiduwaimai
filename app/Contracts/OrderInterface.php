@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: baby
- * Date: 2017/6/9
- * Time: 17:58
- */
 
 namespace App\Contracts;
 
@@ -25,7 +19,7 @@ interface OrderInterface
      * @param string $ticket
      * @return mixed
      */
-    public function confirm(string $order_id, string $ticket);
+    public function confirm($order_id, $ticket);
 
     /**S
      * 订单取消
@@ -34,7 +28,7 @@ interface OrderInterface
      * @param string|integer $type 去向的类型
      * @return mixed
      */
-    public function cancel(string $reason, $type = "-1");
+    public function cancel($reason, $type = "-1");
 
     /**
      * 订单状态

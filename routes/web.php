@@ -26,7 +26,7 @@ Route::get('/', function() {
     );
 
     dd($content, $shopInfo);
-    \App\Traits\Printer::print($content, $shopInfo);
+    // \App\Traits\Printer::print($content, $shopInfo);
     dd($data, $string, $content);
 
     return $data;

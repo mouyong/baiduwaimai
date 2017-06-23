@@ -14,13 +14,14 @@ trait Baidu
 
     protected $timestamp;
     protected $zttp;
+    protected $client;
 
     protected function set_baidu()
     {
         $this->encrypt = '';
         $this->version = 3;
-
         $this->zttp = Zttp::asFormParams();
+        $this->client = new \GuzzleHttp\Client();
     }
 
     /**

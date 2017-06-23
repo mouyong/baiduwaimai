@@ -29,7 +29,7 @@ trait Order
      * @param string $ticket
      * @return array
      */
-    public function confirm(string $order_id, string $ticket)
+    public function confirm($order_id, $ticket)
     {
         $params = $this->buildCmd('order.confirm', $ticket, compact('order_id'));
         return $this->zttp->post(bd_api_url(), $params)->json();
@@ -42,7 +42,7 @@ trait Order
      * @param string|integer $type
      * @return void
      */
-    public function cancel(string $reason = '手动取消', $type = "-1")
+    public function cancel($reason = '手动取消', $type = "-1")
     {
         $body['order_id'] = Input::get('order_id');
         $body['type'] = $type;

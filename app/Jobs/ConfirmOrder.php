@@ -22,7 +22,7 @@ class ConfirmOrder implements ShouldQueue
      *
      * @param string $order_id
      */
-    public function __construct(string $order_id, $data)
+    public function __construct($order_id, $data)
     {
         $this->set_baidu();
         $this->ticket = $data['ticket'];

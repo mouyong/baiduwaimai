@@ -115,8 +115,8 @@ function offset(&$str, array $offset, $delimiter = '-') {
 
 function uuid($offset = [8,12,16,20])
 {
-    $uuid = \Ramsey\Uuid\Uuid::uuid1();
-    $str = $uuid->getHex();
+    $uuid1 = \Ramsey\Uuid\Uuid::uuid1();
+    $str = $uuid1->getHex();
     offset($str, $offset);
     return strtoupper($str);
 }
