@@ -9,15 +9,22 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
-class CreateOrder implements ShouldQueue
+class OrderRecord implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    private $order_id;
-    private $content;
-    private $shopInfo;
+    public $order_id;
+    public $content;
+    public $shopInfo;
 
-    public function __construct($order_id, $content, $shopInfo)
+    /**
+     * OrderRecord constructor.
+     *
+     * @param string $order_id
+     * @param string $content
+     * @param array $shopInfo
+     */
+    public function __construct($order_id, $content, array $shopInfo)
     {
         $this->order_id = $order_id;
         $this->content = $content;
@@ -33,10 +40,8 @@ class CreateOrder implements ShouldQueue
     {
         $data['order_id'] = $this->order_id;
         $data['content'] = $this->content;
-        $data['baidu_source'] = $this->shopInfo['baidu_source'];
-        $data['baidu_secret_key'] = $this->shopInfo['baidu_secret_key'];
+        $data['baidu_shop_id'] = $this->shopInfo['baidu_shop_id'];
         $data['yilianyun_user_id'] = $this->shopInfo['user_id'];
-        $data['yilianyun_api_key'] = $this->shopInfo['api_key'];
         $data['yilianyun_api_key'] = $this->shopInfo['api_key'];
         $data['machines'] = json_encode($this->shopInfo['machines']);
         $data['fonts_setting'] = json_encode($this->shopInfo['fonts_setting']);

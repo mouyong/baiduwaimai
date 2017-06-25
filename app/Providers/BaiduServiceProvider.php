@@ -2,10 +2,10 @@
 
 namespace App\Providers;
 
-use App\Redis\Rcache;
+use Baidu\Baidu;
 use Illuminate\Support\ServiceProvider;
 
-class RcacheServiceProvider extends ServiceProvider
+class BaiduServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the application services.
@@ -24,8 +24,8 @@ class RcacheServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('Rcache', function () {
-            return Rcache::getInstance();
+        $this->app->bind('baidu', function ($app, $auth) {
+            return new Baidu($auth);
         });
     }
 }

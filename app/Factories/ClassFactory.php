@@ -28,7 +28,7 @@ class ClassFactory
                 return $order->detail();
                 break;
             default:
-                return 'call here';
+                throw new \BadMethodCallException('ClassFactory call here');
                 break;
         }
     }

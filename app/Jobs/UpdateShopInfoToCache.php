@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Traits\Shop;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -13,10 +12,9 @@ class UpdateShopInfoToCache implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    use Shop;
-
-    protected $shop_id;
-    protected $source;
+    /** @var int $$shop_id  baidu_shops 表中的 id */
+    private $shop_id;
+    private $baidu;
 
     public function __construct($shop_id)
     {
@@ -25,19 +23,23 @@ class UpdateShopInfoToCache implements ShouldQueue
 
     public function handle()
     {
+        // 调用接口，查出 shop 在易联云的所有信息
         $shopInfo = self::shopInfo();
-        $this->source = $shopInfo['baidu_source'];
 
-        \Cache::forget('bdwm:' . $this->source);
-        self::shopInfoFromCache($shopInfo);
+        // 查询不到信息
+        if ($shopInfo['status'] != 0) {
+            throw new \LogicException('找不到对应的记录进行更新：baidu_shops id:' . $this->shop_id);
+        }
+
+        $this->baidu->shop_id = $shopInfo['data']['baidu_shop_id'];
+
+        \Cache::forget('bdwm:shop:' . $this->baidu->shop_id);
+        $this->baidu->shopInfoFromCache($shopInfo['data']);
     }
 
     protected function shopInfo()
     {
-        $res = \Zttp\Zttp::asFormParams()
-            ->post(bdwm_info_url(), ['shop_id' => $this->shop_id])
-            ->json();
-
-        return $res['data'];
+        $this->baidu = app('baidu');
+        return $this->baidu->send(['id' => $this->shop_id], bdwm_info_url());
     }
 }

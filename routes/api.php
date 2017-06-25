@@ -7,9 +7,14 @@ Route::post('/order', function () {
 });
 
 Route::get('/order', function () {
-    return app('Rcache')->getList('LIST:BAIDU:ORDER', 0, 1);
+    abort(404);
 });
 
-Route::post('/notify', function() {
-    dispatch(new \App\Jobs\UpdateShopInfoToCache(Input::get('shop_id')));
-})->middleware('cors');
+Route::group(['middleware' => ['cors']], function () {
+    Route::post('/notify/{id}', function($id) {
+        dispatch((new \App\Jobs\UpdateShopInfoToCache($id))->onQueue('update'));
+        return ['errno' => 0, 'error' => 'success'];
+    });
+
+    Route::post('/shop.get/{shop_id?}', 'BaiduController@shop');
+});

@@ -1,5 +1,10 @@
 <?php
 
+function env_check()
+{
+    return \App::environment('production');
+}
+
 function apply_method($bd_cmd)
 {
     return app('classfactory')->applyMethod($bd_cmd);
@@ -18,17 +23,17 @@ function array_explode($string, $delimiter = '.')
 
 function y_api_url()
 {
-    return config('baidutakeout.yilianyun_print_api_url', 'http://open.10ss.net:8888');
+    return config('baidutakeout.yilianyun_print_api_url');
 }
 
 function bd_api_url()
 {
-    return config('baidutakeout.baidu_take_out_api_url', 'http://api.waimai.baidu.com/');
+    return config('baidutakeout.baidu_take_out_api_url');
 }
 
 function bdwm_info_url()
 {
-    return config('baidutakeout.baidu_shop_info_url', 'http://yilianyun.10ss.net/bdwm/bdwminfo');
+    return config('baidutakeout.baidu_shop_info_url');
 }
 
 /**
@@ -155,4 +160,25 @@ function mb_substr_replace($string, $replacement, $start, $length = NULL) {
     if ($length === NULL) $length = mb_strlen($string);
     array_splice($smatches[0], $start, $length, $rmatches[0]);
     return join($smatches[0]);
+}
+
+function source()
+{
+    return config('baidutakeout.baidu.source');
+}
+
+
+function secret_key()
+{
+    return config('baidutakeout.baidu.secret_key');
+}
+
+function bug_email()
+{
+    return config('baidutakeout.bug.emails');
+}
+
+function first_no_null(&$var, $default = '')
+{
+    return !empty($var) ? $var : $default;
 }

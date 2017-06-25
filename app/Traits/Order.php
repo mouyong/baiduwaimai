@@ -2,37 +2,24 @@
 
 namespace App\Traits;
 
+use App\Jobs\OrderRecord;
 use App\Jobs\PrintOrder;
 use Illuminate\Support\Facades\Input;
-use Illuminate\Validation\Rules\In;
 
 trait Order
 {
-    use Baidu, Shop;
-
-    protected $ticket;
-
-    /**
-     * 初始化相关变量
-     */
-    public function __construct()
-    {
-        $this->set_baidu();
-
-        $this->ticket = Input::get('ticket');
-    }
+    use Http;
 
     /**
      * 确认订单
      *
      * @param string $order_id
-     * @param string $ticket
      * @return array
      */
-    public function confirm($order_id, $ticket)
+    public function confirm($order_id)
     {
-        $params = $this->buildCmd('order.confirm', $ticket, compact('order_id'));
-        return $this->zttp->post(bd_api_url(), $params)->json();
+        $params = self::buildCmd('order.confirm', compact('order_id'));
+        return self::send($params);
     }
 
     /**
@@ -40,35 +27,32 @@ trait Order
      *
      * @param string $reason
      * @param string|integer $type
-     * @return void
+     * @return mixed
      */
     public function cancel($reason = '手动取消', $type = "-1")
     {
         $body['order_id'] = Input::get('order_id');
         $body['type'] = $type;
         $body['reason '] = $reason;
-        $this->source = Input::get('source');
 
-        $shopInfo = self::shopInfoFromCache($this->source);
-        $this->secret = $shopInfo['baidu_secret_key'];
-
-        $this->res = $this->zttp->post(
-            bd_api_url(),
-            $this->buildCmd('order.cancel', $this->ticket, $body)
-        );
+        $param = $this->buildCmd('order.cancel', $body);
+        $res = $this->send($param);
+        return $res;
     }
 
     /**
      * 完成订单
+     *
+     * @return mixed
      */
     public function complete()
     {
         $order_id = Input::get('order_id');
 
-        $this->res = $this->zttp->post(
-            bd_api_url(),
-            $this->buildCmd('order.complete', $this->ticket, compact('order_id'))
-        );
+        $param = $this->buildCmd('order.complete', compact('order_id'));
+
+        $res = $this->send($param);
+        return $res;
     }
 
     /**
@@ -78,60 +62,86 @@ trait Order
     {
         $cmd = Input::get('cmd');
 
-        if ($cmd === 'order.status.push') {
-            $body = json_decode(Input::get('body'), true);
-            $this->source = Input::get('source');
+        switch ($cmd) {
+            case 'order.status.get':
+                return self::statusGet(Input::get('order_id'));
+                break;
+            case 'order.status.push':
+                return self::statusPush(json_decode(Input::get('body'), true));
+                break;
+        }
+    }
 
-            $shopInfo = self::shopInfoFromCache($this->source);
-            $this->secret = $shopInfo['baidu_secret_key'];
+    private function statusGet($order_id)
+    {
+        $param = $this->buildCmd('order.status.get', compact('order_id'));
+        return self::send($param);
+    }
 
-            $order_id = $body['order_id'];
-            $order_status = (int) $body['status'];
+    private function statusPush($body)
+    {
+        // 获取订单详情
+        $detail = self::detailFromCache($body['order_id']);
 
-            // 从百度获取订单详情
-            $detail = self::detail($order_id);
+        $this->shop_id = $detail['data']['shop']['baidu_shop_id'];
+        // 获取商店信息
+        $shopInfo = self::shopInfoFromCache($this->shop_id);
 
-            switch ($order_status) {
-                // 订单已确认
-                case 5:
+        switch ((int) $body['status']) {
+            // 订单已确认
+            case 5:
+                // 打印订单，存储订单
+                self::printer($shopInfo, $detail, $body['order_id']);
+                break;
+        }
 
-                    // 根据 shop info 的 商店字体设置，是否为默认，自定义字体大小，进行文本格式化。
-                    // 获取格式化后的内容
-                    //
-                    if (empty($shopInfo['machines'])) {
-                        // todo 通知，未添加打印机。
-                        return false;
-                    }
+        $data['errno'] = 0;
+        $data['error'] = 'success';
+        return $this->buildCmd('resp.order.status.push', $data, 0);
+    }
 
-                    // 获取需要转化的内容版本
-                    //
-                    // 遍历进行转化
-                    //
-                    // 遍历用户的所有终端，根据终端版本，传输转化完成后的内容进行打印
-                    foreach ($shopInfo['machines'] as $key => $machine) {
-                        $content = Ylymub::getFormatMsg(
-                            // 从订单详情中获取需要格式化的数据
-                            Order::getPrintData($detail),
-                            $shopInfo,
-                            $key
-                        );
+    private function printer($shopInfo, $detail, $order_id)
+    {
+        // 检查是否有绑定打印机
+        self::check_printer($shopInfo);
 
-                        dispatch(new PrintOrder(Input::get('source'), $order_id, $content, $key));
-                    }
+        // 订单版本对应内容
+        $order = [];
 
-                    break;
+        // 遍历用户的所有终端，根据终端版本，传输转化完成后的内容进行打印
+        foreach ($shopInfo['machines'] as $key => $machine) {
+            // 判断是否需要转换订单内容
+            if (!array_key_exists($machine['version'], $order)) {
+                // 让打印机版本对上转换后的内容
+                $content  = Ylymub::getFormatMsg(
+                    // 从订单详情中获取需要格式化的数据
+                    self::getPrintData($detail),
+                    $shopInfo,
+                    $key
+                );
+                $order[$machine['version']] = $content;
+            } else {
+                // 已经转换过内容，直接取出来打印
+                $content = $order[$machine['version']];
             }
 
-            $data['errno'] = 0;
-            $data['error'] = 'success';
-            $args = $this->buildCmd('resp.order.status.push', $this->ticket, $data, 0);
+            // 每处理完一个终端，就将订单进行打印
+            dispatch((new PrintOrder($shopInfo, $content, $key, $order_id))->onQueue('print'));
+        }
+        \Cache::forget('bdwm:order:'.$order_id);
+    }
 
-            return $args;
-        } elseif($cmd === 'order.status.get') {
-            $order_id = Input::get('order_id');
-
-            $args = $this->buildRes('order.status.get', $this->ticket, compact('order_id'));
-            $this->res = $this->zttp->post(bd_api_url(), $args);
+    private function check_printer($shopInfo)
+    {
+        // 店家没有易联云打印机，无法打印
+        if (!$shopInfo['machines']) {
+            $data['errno'] = -1;
+            $data['error'] = '未添加打印机';
+            $data['data'] = [
+                'yilianyun_user' => $shopInfo['user_id'],
+                'baidu_shop_id' => $shopInfo['baidu_shop_id'],
+            ];
+            throw new \RuntimeException(json_encode($data));
         }
     }
 
@@ -139,25 +149,36 @@ trait Order
      * 获取订单详情
      *
      * @param string $order_id
+     * @param int $expire
      * @return mixed
      */
-    public function detail($order_id = '')
+    public function detailFromCache($order_id, $expire = 60)
     {
-        $order_id = $order_id ?: Input::get('order_id');
-
         if (!$order_id) {
             throw new \InvalidArgumentException('缺少订单 id');
         }
 
-        $args = $this->buildCmd('order.get', $this->ticket, compact('order_id'));
-        $res = $this->zttp->post(bd_api_url(), $args)->json();
+        return \Cache::remember('bdwm:order:' . $order_id, $expire, function () use ($order_id) {
+            $args = self::buildCmd('order.get', compact('order_id'));
+            $response = self::send($args);
 
-        return $res;
+            if ($response['body']['errno'] == 0) {
+                return $response['body'];
+            }
+
+            return null;
+        });
     }
 
-    public static function getPrintData($tmpData)
+    /**
+     * 获取需要打印的数据
+     *
+     * @param array $tmpData
+     * @return mixed
+     */
+    public static function getPrintData(array $tmpData)
     {
-        $tmpData = $tmpData['body']['data'];
+        $tmpData = $tmpData['data'];
 
         // 订单当日流水号
         $data['order_index'] = $tmpData['order']['order_index'];
@@ -212,41 +233,84 @@ trait Order
      * @param array $tmpdata
      * @return array
      */
-    private static function getProduct($tmpdata) {
+    private static function getProduct(array $tmpdata) {
         $data = [];
         foreach ($tmpdata as $num => $item) {
             foreach ($item as $product) {
-                // 产品名称
-                $str = $product['product_name'];
-                // 拼接规格
-                if (count($product['product_attr'])) {
-                    $str .= '(';
-                    foreach ($product['product_attr'] as $product_attr) {
-                        $str .= $product_attr['option'] . '、';
-                    }
-                    $str = rtrim($str, '、') . ')';
-                }
-
-                if (count($product['product_features'])) {
-                    if (!strstr($str, '(')) {
-                        $str .= '(';
-                    } else {
-                        $str = rtrim($str, ')') . '、';
-                    }
-
-                    foreach ($product['product_features'] as $product_features) {
-                        $str .= $product_features['option'] . '、';
-                    }
-                    $str = rtrim($str, '、') . ')';
-                }
-                $str .= '[]';
-
-                // 产品份数
-                $str .= 'x' . $product['product_amount'] . '[]';
-                // 产品份数所对应的总价
-                $data[$num][] = $str . getNumber($product['product_fee']) . '{}';
+                self::package($num, $product, $data);
             }
         }
         return $data;
+    }
+
+    private static function package($num, $product, &$data)
+    {
+        // 产品名称
+        $str = $product['product_name'];
+        // 套餐 true
+        // 不是 false
+        $package = !empty($product['group']);
+
+        // 不是套餐的时候先调用 attr .拼接规格
+        if (!$package) {
+            self::attr($product, $str);
+        }
+        // 名称结束
+        $str .= '[]';
+
+        // 产品份数
+        $str .= 'x' . $product['product_amount'] . '[]';
+        // 产品份数所对应的总价
+        $str .= getNumber($product['product_fee']) . '{}';
+
+        // 是套餐的时候，后调用
+        if ($package) {
+            $packProduct = $product['group'];
+            foreach ($packProduct as $item) {
+                $str .= $item['group_name'] .': ';
+                foreach ($item['product'] as $value) {
+                    $str .= '  ' . $value['product_name'];
+                    // 拼接规格
+                    self::attr($value, $str);
+
+                    // 名称结束
+                    $str .= '[]';
+
+                    // 产品份数
+                    $str .= 'x' . $value['product_amount'] . '[]';
+                    // 产品份数所对应的总价
+                    $str .= getNumber($value['product_fee']) . '{}';
+
+                }
+            }
+        }
+
+        $data[$num][] = $str;
+        return $data;
+    }
+
+    private static function attr($product, &$str)
+    {
+        // 拼接规格
+        if (count($product['product_attr'])) {
+            $str .= '(';
+            foreach ($product['product_attr'] as $product_attr) {
+                $str .= $product_attr['option'] . '、';
+            }
+            $str = rtrim($str, '、') . ')';
+        }
+
+        if (count($product['product_features'])) {
+            if (!strstr($str, '(')) {
+                $str .= '(';
+            } else {
+                $str = rtrim($str, ')') . '、';
+            }
+
+            foreach ($product['product_features'] as $product_features) {
+                $str .= $product_features['option'] . '、';
+            }
+            $str = rtrim($str, '、') . ')';
+        }
     }
 }
