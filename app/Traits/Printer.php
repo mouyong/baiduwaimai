@@ -8,14 +8,14 @@ trait Printer
     /**
      * 订单打印
      *
-     * @param string $content
+     * @param array $data
      * @return mixed
      */
-    public static function print(string $content, $shopInfo, $key = 0)
+    public static function printer(array $data)
     {
-        $str = gen_y_sign_and_data($content, $shopInfo, $key);
-        $query = http_build_query($str);
-        return self::sendCmd(y_api_url(), $query);
+        $query = http_build_query($data);
+        \Log::info($query);
+//        return self::sendCmd(y_api_url(), $query);
     }
 
     /**

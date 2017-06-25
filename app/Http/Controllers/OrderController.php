@@ -2,15 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Contracts\OrderInterface;
 use App\Jobs\ConfirmOrder;
-use App\Jobs\CreateOrder;
-use App\Traits\Order;
+use Baidu\Baidu;
 use Illuminate\Support\Facades\Input;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
-class OrderController extends Controller implements OrderInterface
+class OrderController extends Controller
 {
-    use Order;
+    private $baidu;
+
+    public function __construct(Baidu $baidu)
+    {
+        $this->baidu = $baidu;
+    }
 
     /**
      * @inheritdoc
@@ -18,38 +22,37 @@ class OrderController extends Controller implements OrderInterface
      */
     public function order()
     {
-        $this->source = Input::get('source');
+        $input = Input::all();
+        // 获取数据
+        $body = json_decode($input['body'], true);
 
-        $shop = self::shopInfoFromCache($this->source);
+        // 从缓存获取订单详情
+        $detail = $this->baidu->detailFromCache($body['order_id']);
+
+        $this->baidu->shop_id = $detail['data']['shop']['baidu_shop_id'];
+        $shop = $this->baidu->shopInfoFromCache(
+            $this->baidu->shop_id
+        );
 
         // 系统中不存在绑定该开放平台的用户
         if (is_null($shop)) {
-            \Cache::forget('bdwm:' . $this->source);
+            \Cache::forget('bdwm:shop:' . $this->baidu->shop_id);
+            throw new UnauthorizedHttpException('系统中不存在绑定该开放平台的用户');
         }
 
-        $this->secret  = $shop['baidu_secret_key'];
+        // 自动接单
+        if ($shop['order_auto_confirm'] == 'yes') {
+            $this->dispatch((new ConfirmOrder(
+                $detail['data']['order']['order_id']
+            ))->onQueue('create'));
+        }
 
         $source_order_id = uuid();
-
-        // 获取数据
-        $body = json_decode(Input::get('body'));
-
-//        \Log::info($shop);
-        // 不手动接单
-        if ($shop['order_confirm'] == 'no') {
-            $this->dispatch(new ConfirmOrder($body->order_id, Input::all()));
-        }
-
-        return $this->buildRes('resp.order.create', $this->ticket, compact('source_order_id'), 0);
+        return $this->baidu->buildRes('resp.order.create', compact('source_order_id'), 0);
     }
 
-    /**
-     * TODO 调试而存在
-     */
-    public function __destruct()
+    public function __call($method, $paramterment)
     {
-        if (isset($this->res)) {
-            // dd($this->res->json());
-        }
+        return $this->baidu->{$method}(...$paramterment);
     }
 }

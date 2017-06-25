@@ -13,8 +13,8 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        'App\Events\Event' => [
-            'App\Listeners\EventListener',
+        'App\Baidu\Events\RecordEvent' => [
+            'App\Baidu\Listeners\RecordEventListener',
         ],
     ];
 

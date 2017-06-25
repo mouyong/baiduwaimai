@@ -180,7 +180,7 @@ return [
 
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
         App\Providers\ClassFactoryServiceProvider::class,
-        App\Providers\RcacheServiceProvider::class,
+        App\Providers\BaiduServiceProvider::class,
 
     ],
 

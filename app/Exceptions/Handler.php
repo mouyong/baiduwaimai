@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use App\Mail\BaiduMail;
 use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
@@ -32,6 +33,10 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $exception)
     {
+        if (env_check()) {
+            BaiduMail::trance($exception)->sendTo();
+        }
+
         parent::report($exception);
     }
 

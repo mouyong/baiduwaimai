@@ -6,4 +6,13 @@ return [
 
     'baidu_take_out_api_url' => env('BAIDU_TAKE_OUT_API_URL', 'https://api.waimai.baidu.com'),
     'baidu_shop_info_url' => env('BAIDU_SHOP_INFO_URL', 'http://yilianyun.10ss.net/bdwm/bdwminfo'),
+
+    'baidu' => [
+        'source' => env('BAIDU_SOURCE', 'default'),
+        'secret_key' => env('BAIDU_SECRET_KEY', 'default'),
+    ],
+
+    'bug' => [
+        'emails' => env('BUG_ACCEPT_EMAIL', '925544019@qq.com'),
+    ]
 ];
