@@ -1,10 +1,5 @@
 <?php
 
-function env_check()
-{
-    return \App::environment('production');
-}
-
 function apply_method($bd_cmd)
 {
     return app('classfactory')->applyMethod($bd_cmd);
