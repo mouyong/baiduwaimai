@@ -14,8 +14,8 @@ trait Printer
     public static function printer(array $data)
     {
         $query = http_build_query($data);
-        \Log::info($query);
-//        return self::sendCmd(y_api_url(), $query);
+//        \Log::info($query);
+        return self::sendCmd(y_api_url(), $query);
     }
 
     /**
