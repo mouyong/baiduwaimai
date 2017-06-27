@@ -28,6 +28,13 @@ class Baidu
         $this->version()->encrypt()->client(bd_api_url());
     }
 
+    public function openOrderPush($shop_id)
+    {
+        $option = $this->buildCmd('order.push.open', compact('shop_id'));
+
+        return $this->send($option);
+    }
+
     public function getShopInfo($shop_id)
     {
         $option = $this->buildCmd('shop.get', compact('shop_id'));

@@ -23,6 +23,15 @@ class BaiduController extends Controller
             return ['errno' => 401, 'error' => '缺少必要参数'];
         }
 
+        // 开启店铺订单推送
+        $res = $this->baidu->openOrderPush($shop_id);
+
+        // 商家开启推单失败
+        if ($res['body']['data'] != 1) {
+            throw new \LogicException('订单推送开启失败：商户 id: ' . $shop_id);
+        }
+        dd();
+
         // 获取百度响应的商家信息
         $response = $this->baidu->getShopInfo($shop_id);
 

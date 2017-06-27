@@ -18,3 +18,11 @@ Route::group(['middleware' => ['cors']], function () {
 
     Route::post('/shop.get/{shop_id?}', 'BaiduController@shop');
 });
+
+Route::get('test', function () {
+    dd(123);
+});
+
+Route::get('/hadoop/dfshealth.jsp', function () {
+    return ["I'm health"];
+});
