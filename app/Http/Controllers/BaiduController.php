@@ -30,7 +30,6 @@ class BaiduController extends Controller
         if ($res['body']['data'] != 1) {
             throw new \LogicException('订单推送开启失败：商户 id: ' . $shop_id);
         }
-        dd();
 
         // 获取百度响应的商家信息
         $response = $this->baidu->getShopInfo($shop_id);
