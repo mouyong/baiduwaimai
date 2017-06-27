@@ -28,7 +28,8 @@ trait Http
         $response = $this->client->post($this->api_url, [
             'form_params' => $option
         ]);
+        $response = json_decode($response->getBody(), true);
 
-        return json_decode($response->getBody(), true);
+        return $response;
     }
 }

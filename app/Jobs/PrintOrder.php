@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Traits\Printer;
+use GuzzleHttp\Client;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -12,7 +12,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 class PrintOrder implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    use Printer;
 
     public $shopInfo;
     public $content;
@@ -41,12 +40,17 @@ class PrintOrder implements ShouldQueue
      */
     public function handle()
     {
+        $client = new Client;
+
         // 生成此次打印的数据，包括但不限于 签名
         $data = gen_y_sign_and_data($this->content, $this->shopInfo, $this->key);
+        $query = http_build_query($data);
 
         // 调用打印接口，发送需要打印的数据
-        Printer::printer($data);
+        $res = $client->request('POST', y_api_url(), ['body' => $query]);
 
+        // 获取打印的 id
+//        info('', json_decode($res->getBody(), true));
         // 将此次打印的内容存入数据库
         dispatch((new OrderRecord($this->order_id, $this->content, $this->shopInfo))->onQueue('record'));
     }

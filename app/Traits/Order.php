@@ -2,7 +2,6 @@
 
 namespace App\Traits;
 
-use App\Jobs\OrderRecord;
 use App\Jobs\PrintOrder;
 use Illuminate\Support\Facades\Input;
 
@@ -161,12 +160,11 @@ trait Order
         return \Cache::remember('bdwm:order:' . $order_id, $expire, function () use ($order_id) {
             $args = self::buildCmd('order.get', compact('order_id'));
             $response = self::send($args);
-
             if ($response['body']['errno'] == 0) {
                 return $response['body'];
             }
 
-            return null;
+            throw new \RuntimeException('未获取到订单详情：order_id = ' . $order_id);
         });
     }
 

@@ -35,7 +35,13 @@ class Handler extends ExceptionHandler
     {
         parent::report($exception);
 
-        if ($this->shouldntReport($exception) || \App::environment('production')) {
+        // 非线上环境
+        if (!\App::environment('production')) {
+            return;
+        }
+
+        // 不需要发送邮件的错误
+        if ($this->shouldntReport($exception)){
             return;
         }
 

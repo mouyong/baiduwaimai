@@ -67,7 +67,7 @@ function gen_baidu_sign(array $data)
  * @param string $content
  * @return array
  */
-function gen_y_sign_and_data(string $content, array $shopInfo, $key = 0) {
+function gen_y_sign_and_data($content, array $shopInfo, $key = 0) {
     $machine = $shopInfo['machines'][$key];
 
     $params['partner'] = $shopInfo['user_id'];
