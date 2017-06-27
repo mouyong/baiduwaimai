@@ -32,6 +32,10 @@ Route::get('/', function() {
     return $data;
 });
 
+Route::get('/cookie', function () {
+    return view('cookie');
+});
+
 Route::any('/wechat', 'WechatController@serve');
 
 Route::get('/users', 'UserController@users');
