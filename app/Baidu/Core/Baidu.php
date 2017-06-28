@@ -2,7 +2,12 @@
 
 namespace Baidu;
 
+use App\Http\Controllers\CookieController;
 use App\Traits\Order;
+use GuzzleHttp\Client;
+use GuzzleHttp\Cookie\CookieJar;
+use GuzzleHttp\Cookie\SetCookie;
+use MercurySeries\Flashy\Flashy;
 
 class Baidu
 {
@@ -16,6 +21,8 @@ class Baidu
     protected $api_url;
     protected $timestamp;
     public $shop_id;
+    private $curlopt;
+    private $refere;
 
     public function __construct()
     {
@@ -26,6 +33,23 @@ class Baidu
         }
 
         $this->version()->encrypt()->client(bd_api_url());
+    }
+
+    public function authorized($baidu_shop_id)
+    {
+        $bindUrl = 'http://dev.waimai.baidu.com/dev/norm/shopapplybind';
+
+        $user = config('baidutakeout.baidu.login');
+        $auth = config('baidutakeout.baidu.authorized');
+        $auth['wid'] = $baidu_shop_id;
+
+
+        // 请求登录接口，获取登录后的 cookie，存在 storage_path('cookie.txt') 文件中
+        $this->login($user);
+        $this->setRequest($auth);
+
+        $res = $this->execCurl($bindUrl);
+        return $res;
     }
 
     public function openOrderPush($shop_id)
@@ -58,6 +82,56 @@ class Baidu
         $response = array_only($response, 'body');
 
         return $response['body'];
+    }
+
+    /**
+     * 仅仅只是为了通过登录接口获取登录后的 cookie
+     *
+     * @param array $user 登录百度需要的开发者信息
+     * @return $this
+     */
+    private function login($user)
+    {
+        $loginUrl = 'https://wmpass.baidu.com/api/login';
+        $this->refere = 'https://wmpass.baidu.com/ucenter/userlogin?redirect_url=http://dev.waimai.baidu.com';
+        $this->setRequest($user)->execCurl($loginUrl);
+        return $this;
+    }
+
+    private function execCurl($url)
+    {
+        $ch = curl_init($url);
+        curl_setopt_array($ch, $this->curlopt);
+        $res = curl_exec($ch);
+        $err = curl_error($ch);
+        curl_close($ch);
+
+        if ($err) {
+            throw new \RuntimeException('登录百度开发者后台进行授权出错');
+        }
+
+        return $res;
+    }
+
+    public function setRequest($data)
+    {
+        $this->cookieJar = storage_path('cookie.txt');
+
+        $this->curlopt = [
+            CURLOPT_AUTOREFERER => 1,
+            CURLOPT_FOLLOWLOCATION => 1,
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_CONNECTTIMEOUT => 10,
+            CURLOPT_COOKIEJAR => $this->cookieJar,
+            CURLOPT_COOKIEFILE => $this->cookieJar,
+            CURLOPT_POST => 1,
+            CURLOPT_POSTFIELDS => $data,
+            CURLOPT_HTTPHEADER => [
+                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
+                'Refere' => $this->refere
+            ],
+        ];
+        return $this;
     }
 
     public function setAuth($auth = [])

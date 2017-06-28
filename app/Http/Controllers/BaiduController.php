@@ -12,17 +12,23 @@ class BaiduController extends Controller
     }
 
     /**
+     * 登录百度进行绑定
+     *
+     * @param $shop_id
+     */
+    public function authorized($shop_id)
+    {
+        return $this->baidu->authorized($shop_id);
+    }
+
+    /**
      * 获取已绑定的百度商家详情
      *
      * @param string $shop_id
      * @return mixed
      */
-    public function shop($shop_id = null)
+    public function shop($shop_id)
     {
-        if (is_null($shop_id)) {
-            return ['errno' => 401, 'error' => '缺少必要参数'];
-        }
-
         // 开启店铺订单推送
         $res = $this->baidu->openOrderPush($shop_id);
 

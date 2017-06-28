@@ -10,9 +10,24 @@ return [
     'baidu' => [
         'source' => env('BAIDU_SOURCE', 'default'),
         'secret_key' => env('BAIDU_SECRET_KEY', 'default'),
-    ],
+
+        'login' => [
+            'account' => env('BAIDUDEV_ACCOUNT', 13112345678), // 登录百度外卖的账号
+            'redirect_url' => 'http://dev.waimai.baidu.com', // 不要改，否则会提示未授权的平台。
+            'type' => 1, // 不要改，否则自己去抓手机端的验证方式和接口
+            'upass' => env('BAIDUDEV_UPASS', 'EHbwEjMxEFT'), // 登录百度外卖的密码，抓取的。
+        ],
+        'authorized' => [
+            'source' => config('baidutakeout.baidu.source'),
+            'bindapply_type' => 1, // 绑定类型，1 门店百度ID 2 供应商百度ID
+            // 找商户索要权限，2 商品类接口 3 商户类接口 4 菜品类接口 5 订单类接口 6 营销类接口
+            'wid' => '', // 商户 id
+            'auth_cmd_category' => env('BAIDUDEV_AUTHORIZED', '3,5'),
+        ],
+
+],
 
     'bug' => [
         'emails' => env('BUG_ACCEPT_EMAIL', '925544019@qq.com'),
-    ]
+    ],
 ];
