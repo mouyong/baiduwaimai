@@ -34,8 +34,8 @@ class BaiduController extends Controller
 
         // 商家开启推单失败
         if ($res['body']['data'] != 1) {
-            $message = '很可能还未进项授权，所以无法获取到用户的商店名称';
-            throw new \LogicException('订单推送开启失败：商户 id: ' . $shop_id . '，'. $res['body']['error'] . $message);
+            // 订单推送开启失败：
+            return response()->json(['errno' => 403, 'error' => '您还未进项授权，请授权后再试']);
         }
 
         // 获取百度响应的商家信息
