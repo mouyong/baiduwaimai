@@ -39,13 +39,15 @@ class Baidu
     {
         $bindUrl = 'http://dev.waimai.baidu.com/dev/norm/shopapplybind';
 
-        $user = config('baidutakeout.baidu.login');
+        if (!file_exists(storage_path('cookie'))) {
+            $user = config('baidutakeout.baidu.login');
+            $this->login($user);
+        }
+
         $auth = config('baidutakeout.baidu.authorized');
         $auth['wid'] = $baidu_shop_id;
 
-
         // 请求登录接口，获取登录后的 cookie，存在 storage_path('cookie.txt') 文件中
-        $this->login($user);
         $this->setRequest($auth);
 
         $res = $this->execCurl($bindUrl);
@@ -115,7 +117,7 @@ class Baidu
 
     public function setRequest($data)
     {
-        $this->cookieJar = storage_path('cookie.txt');
+        $this->cookieJar = storage_path('cookie');
 
         $this->curlopt = [
             CURLOPT_AUTOREFERER => 1,
