@@ -6,6 +6,7 @@ use App\Mail\BaiduMail;
 use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use function Psy\debug;
 
 class Handler extends ExceptionHandler
 {
@@ -36,7 +37,7 @@ class Handler extends ExceptionHandler
         parent::report($exception);
 
         // 非线上环境
-        if (!\App::environment('production')) {
+        if (config('app.debug')) {
             return;
         }
 
