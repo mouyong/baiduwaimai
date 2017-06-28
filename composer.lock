@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "0269416a7e51ace51d6725a39790598a",
+    "content-hash": "a6ecc98223500f07168d44a1149499a2",
     "packages": [
         {
             "name": "barryvdh/laravel-cors",
@@ -2909,57 +2909,6 @@
                 "environment"
             ],
             "time": "2016-09-01T10:05:43+00:00"
-        },
-        {
-            "name": "yk/laravel-ocr",
-            "version": "1.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/yassine-khachlek/laravel-ocr.git",
-                "reference": "abf03a3f25215503a352723f7986fae407ff907c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/yassine-khachlek/laravel-ocr/zipball/abf03a3f25215503a352723f7986fae407ff907c",
-                "reference": "abf03a3f25215503a352723f7986fae407ff907c",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
-            },
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    "src/"
-                ],
-                "psr-4": {
-                    "Yk\\LaravelOcr\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPLv2"
-            ],
-            "authors": [
-                {
-                    "name": "Yassine Khachlek",
-                    "email": "yassine.khachlek@gmail.com"
-                }
-            ],
-            "description": "A wrapper for gocr.",
-            "homepage": "https://github.com/yassine-khachlek/laravel-ocr",
-            "keywords": [
-                "OCR",
-                "gocr",
-                "image",
-                "laravel",
-                "recognition",
-                "text"
-            ],
-            "time": "2016-11-05T04:36:58+00:00"
         }
     ],
     "packages-dev": [

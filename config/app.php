@@ -184,7 +184,6 @@ return [
 
         Overtrue\LaravelWechat\ServiceProvider::class,
         MercurySeries\Flashy\FlashyServiceProvider::class,
-        Yk\LaravelOcr\OcrProvider::class, // image ocr
 
     ],
 
@@ -237,7 +236,6 @@ return [
 
         'EasyWeChat' => Overtrue\LaravelWechat\Facade::class,
         'Flashy' => MercurySeries\Flashy\Flashy::class,
-        'Ocr' => Yk\LaravelOcr\Facades\Ocr::class,
 
     ],
 
