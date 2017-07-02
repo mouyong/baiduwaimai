@@ -47,10 +47,8 @@ class PrintOrder implements ShouldQueue
         $query = http_build_query($data);
 
         // 调用打印接口，发送需要打印的数据
-        $res = $client->request('POST', y_api_url(), ['body' => $query]);
+        $client->request('POST', y_api_url(), ['body' => $query]);
 
-        // 获取打印的 id
-//        info('', json_decode($res->getBody(), true));
         // 将此次打印的内容存入数据库
         dispatch((new OrderRecord($this->order_id, $this->content, $this->shopInfo))->onQueue('record'));
     }
