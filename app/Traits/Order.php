@@ -106,27 +106,32 @@ trait Order
 
         // 订单版本对应内容
         $order = [];
+        // 同一台终端，同一份订单打印的次数
+        $mn = $shopInfo['fonts_setting']['mn'];
 
         // 遍历用户的所有终端，根据终端版本，传输转化完成后的内容进行打印
-        foreach ($shopInfo['machines'] as $key => $machine) {
-            // 判断是否需要转换订单内容
-            if (!array_key_exists($machine['version'], $order)) {
-                // 让打印机版本对上转换后的内容
-                $content  = Ylymub::getFormatMsg(
-                    // 从订单详情中获取需要格式化的数据
-                    self::getPrintData($detail),
-                    $shopInfo,
-                    $key
-                );
-                $order[$machine['version']] = $content;
-            } else {
-                // 已经转换过内容，直接取出来打印
-                $content = $order[$machine['version']];
-            }
+        do {
+            foreach ($shopInfo['machines'] as $key => $machine) {
+                // 判断是否需要转换订单内容
+                if (!array_key_exists($machine['version'], $order)) {
+                    // 让打印机版本对上转换后的内容
+                    $content  = Ylymub::getFormatMsg(
+                        // 从订单详情中获取需要格式化的数据
+                        self::getPrintData($detail),
+                        $shopInfo,
+                        $key
+                    );
+                    $order[$machine['version']] = $content;
+                } else {
+                    // 已经转换过内容，直接取出来打印
+                    $content = $order[$machine['version']];
+                }
 
-            // 每处理完一个终端，就将订单进行打印
-            dispatch((new PrintOrder($shopInfo, $content, $key, $order_id))->onQueue('print'));
-        }
+                // 每处理完一个终端，就将订单进行打印
+                dispatch((new PrintOrder($shopInfo, $content, $key, $order_id))->onQueue('print'));
+            }
+        } while (--$mn);
+
         \Cache::forget('bdwm:order:'.$order_id);
     }
 

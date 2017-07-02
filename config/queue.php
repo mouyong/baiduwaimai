@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'default' => env('QUEUE_DRIVER', 'redis'),
+    'default' => env('QUEUE_DRIVER', 'beanstalkd'),
 
     /*
     |--------------------------------------------------------------------------
@@ -43,8 +43,8 @@ return [
 
         'beanstalkd' => [
             'driver' => 'beanstalkd',
-            'host' => 'beanstalkd',
-            'queue' => 'default',
+            'host' => env('BEANSTALKD_HOST', 'beanstalkd'),
+            'queue' => 'create,update,confirm,print,record',
             'retry_after' => 90,
         ],
 
@@ -60,7 +60,7 @@ return [
         'redis' => [
             'driver' => 'redis',
             'connection' => 'default',
-            'queue' => 'default',
+            'queue' => 'create,update,confirm,print,record',
             'retry_after' => 90,
         ],
 
