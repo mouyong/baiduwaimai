@@ -35,7 +35,7 @@ class BaiduController extends Controller
         // 商家开启推单失败
         if ($res['body']['data'] != 1) {
             // 订单推送开启失败：
-            return response()->json(['errno' => 403, 'error' => '您还未进项授权，请授权后再试']);
+            return response()->json(['errno' => 403, 'error' => '您还未进项授权，请授权后再试', 'info' => $res['body']['error']]);
         }
 
         // 获取百度响应的商家信息
