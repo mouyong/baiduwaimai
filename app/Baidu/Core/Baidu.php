@@ -54,9 +54,9 @@ class Baidu
         return $res;
     }
 
-    public function openOrderPush($shop_id)
+    public function openOrderPush($baidu_shop_id)
     {
-        $option = $this->buildCmd('order.push.open', compact('shop_id'));
+        $option = $this->buildCmd('order.push.open', compact('baidu_shop_id'));
 
         return $this->send($option);
     }
