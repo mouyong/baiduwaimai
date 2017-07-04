@@ -30,6 +30,8 @@ trait Order
      */
     public function cancel($reason = '手动取消', $type = "-1")
     {
+        \Cache::forget('bdwm:order:'.$body['order_id']);
+
         $body['order_id'] = Input::get('order_id');
         $body['type'] = $type;
         $body['reason '] = $reason;
@@ -92,6 +94,9 @@ trait Order
                 // 打印订单，存储订单
                 self::printer($shopInfo, $detail, $body['order_id']);
                 break;
+            case 10:
+                \Cache::forget('bdwm:order:'.$order_id);
+                break;
         }
 
         $data['errno'] = 0;
@@ -126,7 +131,6 @@ trait Order
                     // 已经转换过内容，直接取出来打印
                     $content = $order[$machine['version']];
                 }
-
                 // 每处理完一个终端，就将订单进行打印
                 dispatch((new PrintOrder($shopInfo, $content, $key, $order_id))->onQueue('print'));
             }
@@ -313,7 +317,8 @@ trait Order
             foreach ($product['product_features'] as $product_features) {
                 $str .= $product_features['option'] . '、';
             }
-            $str = rtrim($str, '、') . ')';
+
+            $str = mb_substr($str, 0, -1) . '))';
         }
     }
 }
