@@ -95,7 +95,9 @@ trait Order
                 self::printer($shopInfo, $detail, $body['order_id']);
                 break;
             case 10:
-                \Cache::forget('bdwm:order:'.$order_id);
+                if (\Cache::has('bdwm:order:'.$order_id)) {
+                    \Cache::forget('bdwm:order:'.$order_id);
+                }
                 break;
         }
 
