@@ -94,6 +94,7 @@ trait Order
                 // 打印订单，存储订单
                 self::printer($shopInfo, $detail, $body['order_id']);
                 break;
+            case 9:
             case 10:
                 if (\Cache::has('bdwm:order:'.$order_id)) {
                     \Cache::forget('bdwm:order:'.$order_id);
