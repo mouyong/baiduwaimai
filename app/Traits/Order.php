@@ -96,8 +96,8 @@ trait Order
                 break;
             case 9:
             case 10:
-                if (\Cache::has('bdwm:order:'.$order_id)) {
-                    \Cache::forget('bdwm:order:'.$order_id);
+                if (\Cache::has('bdwm:order:'.$body['order_id'])) {
+                    \Cache::forget('bdwm:order:'.$body['order_id']);
                 }
                 break;
         }
@@ -147,7 +147,7 @@ trait Order
         // 店家没有易联云打印机，无法打印
         if (!$shopInfo['machines']) {
             $data['errno'] = -1;
-            $data['error'] = '未添加打印机';
+            $data['error'] = 'No printer added';
             $data['data'] = [
                 'yilianyun_user' => $shopInfo['user_id'],
                 'baidu_shop_id' => $shopInfo['baidu_shop_id'],

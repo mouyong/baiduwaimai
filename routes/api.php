@@ -16,6 +16,11 @@ Route::group(['middleware' => ['cors']], function () {
         return ['errno' => 0, 'error' => 'success'];
     });
 
+    Route::get('/shop.get/{shop_id}', function ($shop_id) {
+        $res = app('baidu')->getShopInfo($shop_id);
+
+        return $res;
+    });
     Route::post('/shop.get/{shop_id}', 'BaiduController@shop');
     // 登录百度，进行授权
     Route::post('/shop.authorized/{shop_id}', 'BaiduController@authorized');
