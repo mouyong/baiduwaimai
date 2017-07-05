@@ -200,7 +200,7 @@ trait Order
         // 百度商户名称
         $data['shop_name'] = $tmpData['shop']['name'];
         // 下单时间
-        $data['confirm_time'] = '下单时间:' . date('Y年m月d日H时i分', $tmpData['order']['confirm_time']);
+        $data['confirm_time'] = '下单时间:' . date('Y年m月d日H时i分', $tmpData['order']['create_time']);
         // 订单编号
         $data['order_id'] = '订单编号:' . $tmpData['order']['order_id'];
 
