@@ -151,6 +151,7 @@ trait Order
             $data['data'] = [
                 'yilianyun_user' => $shopInfo['user_id'],
                 'baidu_shop_id' => $shopInfo['baidu_shop_id'],
+                'shop' => app('baidu')->getShopInfo($shopInfo['baidu_shop_id']),
             ];
             throw new \RuntimeException(json_encode($data));
         }

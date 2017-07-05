@@ -25,7 +25,7 @@ return [
             'auth_cmd_category' => env('BAIDUDEV_AUTHORIZED', '2,3,4,5,6'),
         ],
 
-],
+    ],
 
     'bug' => [
         'emails' => env('BUG_ACCEPT_EMAIL', '925544019@qq.com'),
