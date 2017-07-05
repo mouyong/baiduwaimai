@@ -52,7 +52,7 @@ class Handler extends ExceptionHandler
             'first' => '系统异常',
             'keyword1' => get_class($this),
             'keyword2' => url()->current(),
-            'keyword3' => $_SERVER['REMOTE_ADDR'],
+            'keyword3' => '', // $_SERVER['REMOTE_ADDR'],
             'remark' => '请及时处理'
         ];
 
