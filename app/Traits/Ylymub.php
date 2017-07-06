@@ -533,6 +533,21 @@ class Ylymub
         $content .= $self->fs($data['info'], self::$font_size['receive_info_size'], $version);
         $content .= $self->fs($data['remark'], self::$font_size['remark_size'], $version);
 
+
+        if (!empty($data['taxer']['taxer_id'])) {
+            // 纳税人识别号
+            $content .= $self->fs('纳税人识别号：' . $data['taxer']['taxer_id'], self::$font_size['default'], $version);
+        }
+        if (!empty($data['taxer']['invoice_title'])) {
+            // 发票抬头
+            $content .= $self->fs('发票抬头：' . $data['taxer']['invoice_title'], self::$font_size['default'], $version);
+        }
+
+        // 商家留言
+        if (!empty($shopInfo['fonts_setting']['shop_ad_content'])) {
+            $content .= $self->fs('商家留言：' . $shopInfo['fonts_setting']['shop_ad_content'], self::$font_size['ad'], $version);
+        }
+
         $content .='<FS2><center>** 完 **</center></FS2>';
 
         $content = self::contentformate($content, $version);

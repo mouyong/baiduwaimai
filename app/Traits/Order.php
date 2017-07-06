@@ -134,6 +134,7 @@ trait Order
                     // 已经转换过内容，直接取出来打印
                     $content = $order[$machine['version']];
                 }
+
                 // 每处理完一个终端，就将订单进行打印
                 dispatch((new PrintOrder($shopInfo, $content, $key, $order_id))->onQueue('print'));
             }
@@ -234,6 +235,11 @@ trait Order
         // 备注信息
         $data['remark'] = '订单备注：[用餐人数]' . $userNum . '人；';
         $data['remark'] .= $tmpData['order']['remark'];
+
+        // 纳税人识别号
+        $data['taxer']['taxer_id'] = $tmpData['order']['taxer_id'];
+        // 纳税人 抬头信息
+        $data['taxer']['invoice_title'] = $tmpData['order']['invoice_title'];
 
         return $data;
     }
