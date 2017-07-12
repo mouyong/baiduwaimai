@@ -30,11 +30,11 @@ trait Order
      */
     public function cancel($reason = '手动取消', $type = "-1")
     {
-        \Cache::forget('bdwm:order:'.$body['order_id']);
-
         $body['order_id'] = Input::get('order_id');
         $body['type'] = $type;
         $body['reason '] = $reason;
+
+        \Cache::forget('bdwm:order:'.$body['order_id']);
 
         $param = $this->buildCmd('order.cancel', $body);
         $res = $this->send($param);
