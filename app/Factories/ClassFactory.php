@@ -28,7 +28,9 @@ class ClassFactory
                 return $order->detail();
                 break;
             default:
-                throw new \BadMethodCallException('ClassFactory call here');
+                $tips = '你不担心我封你 ip 吗？注意一点哦，你的 ip 已被记录';
+                info($tips . request()->ip());
+                return response(json_encode($tips, JSON_UNESCAPED_UNICODE));
                 break;
         }
     }

@@ -28,7 +28,7 @@ trait Order
      * @param string|integer $type
      * @return mixed
      */
-    public function cancel($reason = '手动取消', $type = "-1")
+    public function cancel($reason = 'Manual cancellation', $type = "-1")
     {
         $body['order_id'] = Input::get('order_id');
         $body['type'] = $type;
@@ -147,15 +147,26 @@ trait Order
     {
         // 店家没有易联云打印机，无法打印
         if (!$shopInfo['machines']) {
+            $baidu_shop = $this->loadShopFrom($shopInfo['baidu_shop_id']);
+
             $data['errno'] = -1;
             $data['error'] = 'No printer added';
             $data['data'] = [
                 'yilianyun_user' => $shopInfo['user_id'],
                 'baidu_shop_id' => $shopInfo['baidu_shop_id'],
-                'shop' => app('baidu')->getShopInfo($shopInfo['baidu_shop_id']),
+                'shop_name' => $baidu_shop['name'],
+                'shop_phone' => $baidu_shop['phone'],
+                'shop_service_phone' => $baidu_shop['service_phone'],
             ];
-            throw new \RuntimeException(json_encode($data));
+            throw new \RuntimeException(json_encode($data, JSON_UNESCAPED_UNICODE));
         }
+    }
+
+    public function loadShopFrom($baidu_shop_id, $expire = 3600)
+    {
+        return \Cache::remember('baidu:shop:detail:' . $baidu_shop_id, $expire, function () use ($baidu_shop_id) {
+            return app('baidu')->getShopInfo($baidu_shop_id)['body']['data'];
+        });
     }
 
     /**
@@ -168,7 +179,7 @@ trait Order
     public function detailFromCache($order_id, $expire = 60)
     {
         if (!$order_id) {
-            throw new \InvalidArgumentException('缺少订单 id');
+            throw new \InvalidArgumentException('Parameter missing order id');
         }
 
         return \Cache::remember('bdwm:order:' . $order_id, $expire, function () use ($order_id) {
@@ -178,7 +189,7 @@ trait Order
                 return $response['body'];
             }
 
-            throw new \RuntimeException('未获取到订单详情：order_id = ' . $order_id);
+            throw new \RuntimeException('No order detail were obtained：order_id = ' . $order_id);
         });
     }
 

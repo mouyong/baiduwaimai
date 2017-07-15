@@ -31,11 +31,20 @@ class BaiduController extends Controller
     {
         // 开启店铺订单推送
         $res = $this->baidu->openOrderPush($shop_id);
-
         // 商家开启推单失败
         if ($res['body']['data'] != 1) {
+            $response = [
+                'errno' => 403,
+                'error' => '您还未进项授权，请授权后再试',
+            ];
+
             // 订单推送开启失败：
-            return response()->json(['errno' => 403, 'error' => '您还未进项授权，请授权后再试', 'info' => $res['body']['error']]);
+            $body = $res['body'];
+            if ($body['errno'] == 20253) {
+                $response['errno'] = $res['body']['errno']; // errno 20253
+                $response['error'] = $res['body']['error']; // shop not exist
+            }
+            return response()->json($response, JSON_UNESCAPED_UNICODE);
         }
 
         // 获取百度响应的商家信息

@@ -109,7 +109,7 @@ class Baidu
         curl_close($ch);
 
         if ($err) {
-            throw new \RuntimeException('登录百度开发者后台进行授权出错');
+            throw new \RuntimeException('Login Baidu developer background for authorization error');
         }
 
         return $res;

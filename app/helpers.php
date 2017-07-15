@@ -8,7 +8,7 @@ function apply_method($bd_cmd)
 function array_explode($string, $delimiter = '.')
 {
     if (!isset($string)) {
-        throw new InvalidArgumentException('缺少必要参数');
+        throw new InvalidArgumentException('array.explode paramter missing' . requiest()->ip());
     }
 
     if (is_string($string)) {

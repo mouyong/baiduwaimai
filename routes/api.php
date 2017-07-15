@@ -7,19 +7,13 @@ Route::post('/order', function () {
 });
 
 Route::get('/order', function () {
-    abort(404);
+    return ['errno' => 403, 'error' => 'unauthorized action.'];
 });
 
 Route::group(['middleware' => ['cors']], function () {
     Route::post('/notify/{id}', function($id) {
         dispatch((new \App\Jobs\UpdateShopInfoToCache($id))->onQueue('update'));
         return ['errno' => 0, 'error' => 'success'];
-    });
-
-    Route::get('/shop.get/{shop_id}', function ($shop_id) {
-        $res = app('baidu')->getShopInfo($shop_id);
-
-        return $res;
     });
     Route::post('/shop.get/{shop_id}', 'BaiduController@shop');
     // 登录百度，进行授权

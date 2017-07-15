@@ -47,21 +47,6 @@ class Handler extends ExceptionHandler
         }
 
         BaiduMail::trance($exception)->sendTo();
-
-        $data = [
-            'first' => '系统异常',
-            'keyword1' => get_class($this),
-            'keyword2' => url()->current(),
-            'keyword3' => '', // $_SERVER['REMOTE_ADDR'],
-            'remark' => '请及时处理'
-        ];
-
-        $wechat = app('wechat');
-        $wechat->notice->to('oExW-vgbrMqersRSI4LarFHElnNY')
-            ->uses('hSv7tkI6iYvdeoZhUlPt9wcpi2ECFk3X1ly4UnNBK2M')
-            ->andUrl(url()->current())
-            ->data($data)
-            ->send();
     }
 
     /**

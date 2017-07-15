@@ -182,7 +182,6 @@ return [
         App\Providers\ClassFactoryServiceProvider::class,
         App\Providers\BaiduServiceProvider::class,
 
-        Overtrue\LaravelWechat\ServiceProvider::class,
         MercurySeries\Flashy\FlashyServiceProvider::class,
 
     ],
@@ -234,7 +233,6 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
 
-        'EasyWeChat' => Overtrue\LaravelWechat\Facade::class,
         'Flashy' => MercurySeries\Flashy\Flashy::class,
 
     ],
