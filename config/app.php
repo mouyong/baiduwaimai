@@ -182,8 +182,6 @@ return [
         App\Providers\ClassFactoryServiceProvider::class,
         App\Providers\BaiduServiceProvider::class,
 
-        MercurySeries\Flashy\FlashyServiceProvider::class,
-
     ],
 
     /*
@@ -232,8 +230,6 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-
-        'Flashy' => MercurySeries\Flashy\Flashy::class,
 
     ],
 

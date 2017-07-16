@@ -3,10 +3,6 @@
 namespace Baidu;
 
 use App\Traits\Order;
-use GuzzleHttp\Client;
-use GuzzleHttp\Cookie\CookieJar;
-use GuzzleHttp\Cookie\SetCookie;
-use MercurySeries\Flashy\Flashy;
 
 class Baidu
 {

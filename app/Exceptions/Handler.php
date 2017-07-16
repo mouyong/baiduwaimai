@@ -6,7 +6,6 @@ use App\Mail\BaiduMail;
 use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use function Psy\debug;
 
 class Handler extends ExceptionHandler
 {
