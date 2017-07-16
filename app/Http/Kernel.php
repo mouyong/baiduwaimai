@@ -59,6 +59,5 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'forward' => \App\Http\Middleware\ApiForward::class,
         'cors' => \Barryvdh\Cors\HandleCors::class,
-        'wechat.oauth' => \Overtrue\LaravelWechat\Middleware\OAuthAuthenticate::class,
     ];
 }
