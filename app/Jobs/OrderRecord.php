@@ -34,7 +34,7 @@ class OrderRecord implements ShouldQueue
     /**
      * Execute the job.
      *
-     * @return void
+     * @return bool
      */
     public function handle()
     {
@@ -48,5 +48,6 @@ class OrderRecord implements ShouldQueue
         $data['raw'] = json_encode($this->shopInfo);
 
         Record::create($data);
+        return true;
     }
 }

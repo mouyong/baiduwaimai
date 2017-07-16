@@ -11,6 +11,12 @@ class BaiduController extends Controller
         $this->baidu = app('baidu');
     }
 
+    public function notify($id)
+    {
+        dispatch((new \App\Jobs\UpdateShopInfoToCache($id))->onQueue('update'));
+        return ['errno' => 0, 'error' => 'success'];
+    }
+
     /**
      * 登录百度进行绑定
      *

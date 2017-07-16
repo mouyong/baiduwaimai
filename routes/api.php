@@ -11,10 +11,7 @@ Route::get('/order', function () {
 });
 
 Route::group(['middleware' => ['cors']], function () {
-    Route::post('/notify/{id}', function($id) {
-        dispatch((new \App\Jobs\UpdateShopInfoToCache($id))->onQueue('update'));
-        return ['errno' => 0, 'error' => 'success'];
-    });
+    Route::post('/notify/{id}', 'BaiduController@notify');
     Route::post('/shop.get/{shop_id}', 'BaiduController@shop');
     // 登录百度，进行授权
     Route::post('/shop.authorized/{shop_id}', 'BaiduController@authorized');

@@ -12,7 +12,7 @@ class ConfirmOrder implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $order_id;
+    public $order_id;
 
     public function __construct($order_id)
     {

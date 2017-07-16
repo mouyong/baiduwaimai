@@ -13,8 +13,8 @@ class UpdateShopInfoToCache implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /** @var int $$shop_id  baidu_shops 表中的 id */
-    private $shop_id;
-    private $baidu;
+    public $shop_id;
+    public $baidu;
 
     public function __construct($shop_id)
     {

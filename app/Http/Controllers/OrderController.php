@@ -51,8 +51,8 @@ class OrderController extends Controller
         return $this->baidu->buildRes('resp.order.create', compact('source_order_id'), 0);
     }
 
-    public function __call($method, $paramterment)
+    public function __call($method, $parameters)
     {
-        return $this->baidu->{$method}(...$paramterment);
+        return $this->baidu->{$method}(...$parameters);
     }
 }

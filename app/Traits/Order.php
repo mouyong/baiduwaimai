@@ -138,7 +138,7 @@ trait Order
                 // 每处理完一个终端，就将订单进行打印
                 dispatch((new PrintOrder($shopInfo, $content, $key, $order_id))->onQueue('print'));
             }
-        } while (--$mn);
+        } while (0);
 
         \Cache::forget('bdwm:order:'.$order_id);
     }

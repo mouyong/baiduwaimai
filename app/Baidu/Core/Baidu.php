@@ -2,7 +2,6 @@
 
 namespace Baidu;
 
-use App\Http\Controllers\CookieController;
 use App\Traits\Order;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
