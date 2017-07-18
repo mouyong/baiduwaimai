@@ -44,7 +44,7 @@ class OrderController extends Controller
         if ($shop['order_auto_confirm'] == 'yes') {
             $this->dispatch((new ConfirmOrder(
                 $detail['data']['order']['order_id']
-            ))->onQueue('create'));
+            ))->onQueue('confirm'));
         }
 
         $source_order_id = uuid();
