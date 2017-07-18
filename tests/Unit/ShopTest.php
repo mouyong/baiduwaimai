@@ -17,7 +17,7 @@ class ShopTest extends TestCase
     {
         parent::setUp();
         $this->shop_id = 1717041709;
-        $this->id = 3;
+        $this->id = 186;
     }
 
     public function testApiOrderHome()

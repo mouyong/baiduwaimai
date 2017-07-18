@@ -33,7 +33,7 @@ class JobTest extends TestCase
      * @param string $queue
      * @dataProvider orderIdProvider
      */
-    public function testConfirmPushed($order_id, $queue = 'create')
+    public function testConfirmPushed($order_id, $queue = 'confirm')
     {
         Queue::fake();
         dispatch((new ConfirmOrder($order_id))->onQueue($queue));
@@ -77,7 +77,7 @@ class JobTest extends TestCase
     public function shopInfo()
     {
         return array (
-            'id' => '3',
+            'id' => '186',
             'user_id' => '626',
             'baidu_shop_id' => '1717041709',
             'order_auto_confirm' => 'yes',
