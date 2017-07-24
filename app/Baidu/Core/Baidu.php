@@ -67,12 +67,15 @@ class Baidu
 
         // 发送 申请 bind 请求
         $res = $this->execCurl($bindUrl);
+        $res = json_decode($res, true);
+        $res['source'] = $auth['source'];
+
         return $res;
     }
 
-    public function openOrderPush($baidu_shop_id)
+    public function openOrderPush($baidu_shop_id, $source)
     {
-        $option = $this->buildCmd('order.push.open', compact('baidu_shop_id'));
+        $option = $this->setAuth($source)->buildCmd('order.push.open', compact('baidu_shop_id'));
 
         return $this->send($option);
     }

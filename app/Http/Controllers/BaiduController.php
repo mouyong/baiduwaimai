@@ -39,10 +39,11 @@ class BaiduController extends Controller
      * @param string $shop_id
      * @return mixed
      */
-    public function shop($shop_id)
+    public function shop($shop_id, $source)
     {
         // 开启店铺订单推送
-        $res = $this->baidu->openOrderPush($shop_id);
+        $res = $this->baidu->openOrderPush($shop_id, $source);
+
         // 商家开启推单失败
         if ($res['body']['data'] != 1) {
             $response = [
