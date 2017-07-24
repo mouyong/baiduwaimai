@@ -3,6 +3,7 @@
 namespace Baidu;
 
 use App\Traits\Order;
+use GuzzleHttp\Client;
 
 class Baidu
 {
@@ -21,10 +22,10 @@ class Baidu
 
     public function __construct()
     {
-        if (func_num_args() != 0 && count(func_get_arg(0)) == 2) {
-            $this->setAuth(func_get_arg(0));
-        } else {
-            $this->setAuth();
+        if (func_num_args() == 1) {
+            if (!empty(func_get_arg(0))) {
+                $this->setAuth(func_get_arg(0)[0]);
+            }
         }
 
         $this->version()->encrypt()->client(bd_api_url());
@@ -34,17 +35,37 @@ class Baidu
     {
         $bindUrl = 'http://dev.waimai.baidu.com/dev/norm/shopapplybind';
 
+        // 判断目录中是否有文件
         if (!file_exists(storage_path('cookie'))) {
+            // 没有文件就读取配置信息
             $user = config('baidutakeout.baidu.login');
+            // 并执行登录操作
             $this->login($user);
         }
 
+        // 读取配置信息
         $auth = config('baidutakeout.baidu.authorized');
-        $auth['wid'] = $baidu_shop_id;
+        // 获取一个未满 200 的 source
+        $client = new Client();
+        $res = $client->post(no_upper_limit_source_info_url());
+        $res = json_decode($res->getBody(), true);
+
+        if ($res['status'] == 0) {
+            // 填写配置信息的 商户 ID
+            $auth['wid'] = $baidu_shop_id;
+            $auth['source'] = $res['data']['source'];
+
+            if ($res['data']['ka'] == 'yes') {
+                $auth['bindapply_type'] = 2;
+            }
+        } else {
+            return false;
+        }
 
         // 请求登录接口，获取登录后的 cookie，存在 storage_path('cookie.txt') 文件中
         $this->setRequest($auth);
 
+        // 发送 申请 bind 请求
         $res = $this->execCurl($bindUrl);
         return $res;
     }
@@ -89,8 +110,11 @@ class Baidu
      */
     private function login($user)
     {
+        // 定义登录请求的 url
         $loginUrl = 'https://wmpass.baidu.com/api/login';
+        // 定义来源地址
         $this->refere = 'https://wmpass.baidu.com/ucenter/userlogin?redirect_url=http://dev.waimai.baidu.com';
+        // 设置请求参数并发起登录请求
         $this->setRequest($user)->execCurl($loginUrl);
         return $this;
     }
@@ -115,28 +139,25 @@ class Baidu
         $this->cookieJar = storage_path('cookie');
 
         $this->curlopt = [
-            CURLOPT_AUTOREFERER => 1,
-            CURLOPT_FOLLOWLOCATION => 1,
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_CONNECTTIMEOUT => 10,
-            CURLOPT_COOKIEJAR => $this->cookieJar,
-            CURLOPT_COOKIEFILE => $this->cookieJar,
-            CURLOPT_POST => 1,
-            CURLOPT_POSTFIELDS => $data,
+            CURLOPT_AUTOREFERER => 1, // 启用自动跳转
+            CURLOPT_FOLLOWLOCATION => 1, // 启用跟随跳转
+            CURLOPT_RETURNTRANSFER => 1, // 启用将请求的 url 的信息原生返回，不要渲染
+            CURLOPT_CONNECTTIMEOUT => 10, // 设置请求超时时间 单位 s
+            CURLOPT_COOKIEJAR => $this->cookieJar, // 设置将该次请求所得到的所有 cookie 写入到定义的文件中去
+            CURLOPT_COOKIEFILE => $this->cookieJar, // 设置该次请求所携带的 cookie 文件
+            CURLOPT_POST => 1, // 设置 POST 请求
+            CURLOPT_POSTFIELDS => $data, // 设置 POST 请求的内容
             CURLOPT_HTTPHEADER => [
-                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
-                'Refere' => $this->refere
+                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36', // 设置 User-Agent
+                'Refere' => $this->refere // 定义来源地址
             ],
         ];
         return $this;
     }
 
-    public function setAuth($auth = [])
+    public function setAuth($source)
     {
-        if ($auth) {
-            return $this->source($auth[0])->secret_key($auth[1]);
-        }
-        return $this->source()->secret_key();
+        return $this->source($source)->secret_key(secret_key($source));
     }
 
     public function version()
@@ -175,23 +196,15 @@ class Baidu
         return $this->api_url;
     }
 
-    protected function source()
+    protected function source($source)
     {
-        if (func_num_args() == 1) {
-            $this->source = func_get_arg(0);
-        } else {
-            $this->source = source();
-        }
+        $this->source = $source;
         return $this;
     }
 
-    protected function secret_key()
+    protected function secret_key($secret_key)
     {
-        if (func_num_args() == 1) {
-            $this->secret = func_get_arg(0);
-        } else {
-            $this->secret = secret_key();
-        }
+        $this->secret = $secret_key;
         return $this;
     }
 
@@ -248,22 +261,20 @@ class Baidu
      *
      * @param array|null $data
      * @param int $expire
+     * @param string $cache_key
      * @return mixed
      */
-    public function shopInfoFromCache($data = null, $expire = 1440)
+    public function shopInfoFromCache($data = null, $expire = 1440, $cache_key = 'bdwm:shop:')
     {
-        return \Cache::remember('bdwm:shop:' . $this->shop_id, $expire, function () use ($data){
+        $cache_key .= $this->shop_id;
+        return \Cache::remember($cache_key, $expire, function () use ($data){
             if (is_array($data)) {
                 return $data;
             }
-
             $res = $this->send(['baidu_shop_id' => $data], bdwm_info_url());
-
             if ($res['status'] == 0) {
                 return $res['data'];
             }
-
-            return null;
         });
     }
 }

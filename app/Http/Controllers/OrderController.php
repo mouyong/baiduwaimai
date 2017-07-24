@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Jobs\ConfirmOrder;
 use Baidu\Baidu;
 use Illuminate\Support\Facades\Input;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class OrderController extends Controller
 {
@@ -23,32 +22,34 @@ class OrderController extends Controller
     public function order()
     {
         $input = Input::all();
+
+        $source = source($input['source']);
+
         // 获取数据
         $body = json_decode($input['body'], true);
 
         // 从缓存获取订单详情
-        $detail = $this->baidu->detailFromCache($body['order_id']);
+        $detail = $this->baidu->detailFromCache($body['order_id'], $source);
 
         $this->baidu->shop_id = $detail['data']['shop']['baidu_shop_id'];
         $shop = $this->baidu->shopInfoFromCache(
             $this->baidu->shop_id
         );
 
-        // 系统中不存在绑定该开放平台的用户
-        if (is_null($shop)) {
-            \Cache::forget('bdwm:shop:' . $this->baidu->shop_id);
-            throw new UnauthorizedHttpException('系统中不存在绑定该开放平台的用户');
-        }
-
-        // 自动接单
-        if ($shop['order_auto_confirm'] == 'yes') {
-            $this->dispatch((new ConfirmOrder(
-                $detail['data']['order']['order_id']
-            ))->onQueue('confirm'));
+        if (!is_null($shop)) {
+            // 自动接单
+            if ($shop['order_auto_confirm'] == 'yes') {
+                $this->dispatch((new ConfirmOrder(
+                    $detail['data']['order']['order_id'],
+                    $source
+                ))->onQueue('confirm'));
+            }
+        } else {
+            \Cache::forget('bdwm:shop:'. $this->baidu->shop_id);
         }
 
         $source_order_id = uuid();
-        return $this->baidu->buildRes('resp.order.create', compact('source_order_id'), 0);
+        return $this->baidu->setAuth($source)->buildRes('resp.order.create', compact('source_order_id'), 0);
     }
 
     public function __call($method, $parameters)

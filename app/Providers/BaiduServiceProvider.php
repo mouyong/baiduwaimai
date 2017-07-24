@@ -24,8 +24,8 @@ class BaiduServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind('baidu', function ($app, $auth) {
-            return new Baidu($auth);
+        $this->app->bind('baidu', function ($app, $source) {
+            return new Baidu($source);
         });
     }
 }

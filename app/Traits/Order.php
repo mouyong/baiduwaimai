@@ -30,13 +30,18 @@ trait Order
      */
     public function cancel($reason = 'Manual cancellation', $type = "-1")
     {
+        $source = Input::get('source');
+
         $body['order_id'] = Input::get('order_id');
         $body['type'] = $type;
         $body['reason '] = $reason;
 
-        \Cache::forget('bdwm:order:'.$body['order_id']);
+        $cache_key = 'bdwm:order:' . $body['order_id'];
+        if (\Cache::has($cache_key)) {
+            \Cache::forget($cache_key);
+        }
 
-        $param = $this->buildCmd('order.cancel', $body);
+        $param = $this->setAuth($source)->buildCmd('order.cancel', $body);
         $res = $this->send($param);
         return $res;
     }
@@ -49,9 +54,9 @@ trait Order
     public function complete()
     {
         $order_id = Input::get('order_id');
+        $source = Input::get('source');
 
-        $param = $this->buildCmd('order.complete', compact('order_id'));
-
+        $param = $this->setAuth($source)->buildCmd('order.complete', compact('order_id'));
         $res = $this->send($param);
         return $res;
     }
@@ -62,28 +67,28 @@ trait Order
     public function status()
     {
         $cmd = Input::get('cmd');
+        $source = Input::get('source');
 
         switch ($cmd) {
             case 'order.status.get':
-                return self::statusGet(Input::get('order_id'));
+                return self::statusGet(Input::get('order_id'), $source);
                 break;
             case 'order.status.push':
-                return self::statusPush(json_decode(Input::get('body'), true));
+                return self::statusPush(json_decode(Input::get('body'), true), $source);
                 break;
         }
     }
 
-    private function statusGet($order_id)
+    private function statusGet($order_id, $source)
     {
-        $param = $this->buildCmd('order.status.get', compact('order_id'));
+        $param = $this->setAuth($source)->buildCmd('order.status.get', compact('order_id'));
         return self::send($param);
     }
 
-    private function statusPush($body)
+    private function statusPush($body, $source)
     {
         // 获取订单详情
-        $detail = self::detailFromCache($body['order_id']);
-
+        $detail = self::detailFromCache($body['order_id'], $source);
         $this->shop_id = $detail['data']['shop']['baidu_shop_id'];
         // 获取商店信息
         $shopInfo = self::shopInfoFromCache($this->shop_id);
@@ -92,7 +97,7 @@ trait Order
             // 订单已确认
             case 5:
                 // 打印订单，存储订单
-                self::printer($shopInfo, $detail, $body['order_id']);
+                self::printer($shopInfo, $detail, $body['order_id'], $source);
                 break;
             case 9:
             case 10:
@@ -107,10 +112,10 @@ trait Order
         return $this->buildCmd('resp.order.status.push', $data, 0);
     }
 
-    private function printer($shopInfo, $detail, $order_id)
+    private function printer($shopInfo, $detail, $order_id, $source)
     {
         // 检查是否有绑定打印机
-        self::check_printer($shopInfo);
+        self::check_printer($shopInfo, $source);
 
         // 订单版本对应内容
         $order = [];
@@ -136,18 +141,18 @@ trait Order
                 }
 
                 // 每处理完一个终端，就将订单进行打印
-                dispatch((new PrintOrder($shopInfo, $content, $key, $order_id))->onQueue('print'));
+                dispatch((new PrintOrder($shopInfo, $content, $key, $order_id, $source))->onQueue('print'));
             }
         } while (--$mn);
 
         \Cache::forget('bdwm:order:'.$order_id);
     }
 
-    private function check_printer($shopInfo)
+    private function check_printer($shopInfo, $source)
     {
         // 店家没有易联云打印机，无法打印
         if (!$shopInfo['machines']) {
-            $baidu_shop = $this->loadShopFrom($shopInfo['baidu_shop_id']);
+            $baidu_shop = $this->loadShopFrom($shopInfo['baidu_shop_id'], $source);
 
             $data['errno'] = -1;
             $data['error'] = 'No printer added';
@@ -162,10 +167,10 @@ trait Order
         }
     }
 
-    public function loadShopFrom($baidu_shop_id, $expire = 3600)
+    public function loadShopFrom($baidu_shop_id, $source, $expire = 3600)
     {
-        return \Cache::remember('baidu:shop:detail:' . $baidu_shop_id, $expire, function () use ($baidu_shop_id) {
-            return app('baidu')->getShopInfo($baidu_shop_id)['body']['data'];
+        return \Cache::remember('baidu:shop:detail:' . $baidu_shop_id, $expire, function () use ($baidu_shop_id, $source) {
+            return app('baidu', (array) $source)->getShopInfo($baidu_shop_id)['body']['data'];
         });
     }
 
@@ -173,18 +178,22 @@ trait Order
      * 获取订单详情
      *
      * @param string $order_id
+     * @param string $source
      * @param int $expire
+     * @param string $cache_key
      * @return mixed
      */
-    public function detailFromCache($order_id, $expire = 60)
+    public function detailFromCache($order_id, $source, $expire = 60, $cache_key = 'bdwm:order:')
     {
         if (!$order_id) {
             throw new \InvalidArgumentException('Parameter missing order id');
         }
 
-        return \Cache::remember('bdwm:order:' . $order_id, $expire, function () use ($order_id) {
-            $args = self::buildCmd('order.get', compact('order_id'));
-            $response = self::send($args);
+        $cache_key .= $order_id;
+        return \Cache::remember($cache_key, $expire, function () use ($order_id, $source) {
+            $response = self::send(
+                self::setAuth($source)->buildCmd('order.get', compact('order_id'))
+            );
             if ($response['body']['errno'] == 0) {
                 return $response['body'];
             }

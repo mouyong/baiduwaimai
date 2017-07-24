@@ -21,10 +21,16 @@ class BaiduController extends Controller
      * 登录百度进行绑定
      *
      * @param $shop_id
+     * @return array|bool
      */
     public function authorized($shop_id)
     {
-        return $this->baidu->authorized($shop_id);
+        $data = $this->baidu->authorized($shop_id);
+
+        if (!$data) {
+            return ['errno' => 202, 'error' => 'not found not upper limit source'];
+        }
+        return $data;
     }
 
     /**

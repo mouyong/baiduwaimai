@@ -31,6 +31,16 @@ function bdwm_info_url()
     return config('baidutakeout.baidu_shop_info_url');
 }
 
+function source_info_url()
+{
+    return config('baidutakeout.baidu_source_info_url');
+}
+
+function no_upper_limit_source_info_url()
+{
+    return config('baidutakeout.baidu_no_upper_limit_source_info_url');
+}
+
 /**
  * 生成百度签名
  *
@@ -157,15 +167,41 @@ function mb_substr_replace($string, $replacement, $start, $length = NULL) {
     return join($smatches[0]);
 }
 
-function source()
+function source($source, $source_info_key = 'bdwm:shop:')
 {
-    return config('baidutakeout.baidu.source');
+    $info_key = $source_info_key . $source;
+    $sourceInfo = sourceInfoFromCache($source, $info_key);
+    if (is_null($sourceInfo)) {
+        \Cache::forget($info_key);
+        return $sourceInfo;
+    }
+    return $sourceInfo['source'];
 }
 
-
-function secret_key()
+function secret_key($source, $source_info_key = 'bdwm:shop:')
 {
-    return config('baidutakeout.baidu.secret_key');
+    $info_key = $source_info_key . $source;
+    $sourceInfo = sourceInfoFromCache($source, $info_key);
+    if (is_null($sourceInfo)) {
+        \Cache::forget($info_key);
+        return $sourceInfo;
+    }
+    return $sourceInfo['secret'];
+}
+
+function sourceInfoFromCache($source, $info_key)
+{
+    return \Cache::rememberForever($info_key, function () use ($source) {
+        $res = app('baidu')->send(compact('source'), source_info_url());
+        if ($res['status'] == 0) {
+            return $res['data'];
+        }
+    });
+}
+
+function sourceInfoExists($info_key)
+{
+    return \Cache::has($info_key);
 }
 
 function bug_email()
