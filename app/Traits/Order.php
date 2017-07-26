@@ -93,6 +93,15 @@ trait Order
         // 获取商店信息
         $shopInfo = self::shopInfoFromCache($this->shop_id);
 
+        // 授权了。但是未与账户绑定上
+        if (is_null($shopInfo)) {
+            $data['errno'] = '-1';
+            $data['error'] = '该商户授权了。但是未与账户绑定上';
+            $data['shop_id'] = $this->shop_id;
+            $data['mission_order_detail'] = $detail;
+            throw new \RuntimeException(json_encode($data, JSON_UNESCAPED_UNICODE));
+        }
+
         switch ((int) $body['status']) {
             // 订单已确认
             case 5:
