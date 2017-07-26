@@ -48,7 +48,7 @@ class PrintOrder implements ShouldQueue
         $data = gen_y_sign_and_data($this->content, $this->shopInfo, $this->key);
         $query = http_build_query($data);
 
-//         info($query);
+        info($query);
 
         // 调用打印接口，发送需要打印的数据
         $client->request('POST', y_api_url(), ['body' => $query]);

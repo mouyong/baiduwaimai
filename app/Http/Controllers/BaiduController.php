@@ -23,13 +23,22 @@ class BaiduController extends Controller
      * @param $shop_id
      * @return array|bool
      */
-    public function authorized($shop_id)
+    public function authorized($shop_id, $source = null)
     {
-        $data = $this->baidu->authorized($shop_id);
+        $data = $this->baidu->authorized($shop_id, $source);
+        // ka 用户，但是当前 source 已经达到了 200 限制
+        if (is_array($data) && empty($data)) {
+            return ['errno' => 202, 'error' => '<span style="color: blue;">ka</span> not found not upper limit source'];
+        }
 
-        if (!$data) {
+        if (is_null($data)) {
+            return ['errno' => 203, 'error' => '您的店铺正在审核中'];
+        }
+
+        if ($data === false) {
             return ['errno' => 202, 'error' => 'not found not upper limit source'];
         }
+
         return $data;
     }
 
@@ -45,17 +54,17 @@ class BaiduController extends Controller
         $res = $this->baidu->openOrderPush($shop_id, $source);
 
         // 商家开启推单失败
-        if ($res['body']['data'] != 1) {
+        if ($res['body']['errno'] != 0) {
             $response = [
                 'errno' => 403,
-                'error' => '您还未进项授权，请授权后再试',
+                'error' => '<div style="text-align: left;padding-left: 2.5em;">百度外卖接口出现未知错误。<br>错误码：' . $res['body']['errno'] . '<br>错误消息提示：' .  $res['body']['error'] . '</div>', // 百度外卖接口出错。未知错误
             ];
 
             // 订单推送开启失败：
-            $body = $res['body'];
-            if ($body['errno'] == 20253) {
+            if ($res['body']['errno'] == 20253) {
                 $response['errno'] = $res['body']['errno']; // errno 20253
-                $response['error'] = $res['body']['error']; // shop not exist
+                $response['error'] = '未查找到该商户信息。你可能还未进行授权'; // shop not exist
+                $response['info'] = $res['body']['error']; // shop not exist
             }
             return response()->json($response, JSON_UNESCAPED_UNICODE);
         }

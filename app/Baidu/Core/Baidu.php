@@ -31,7 +31,7 @@ class Baidu
         $this->version()->encrypt()->client(bd_api_url());
     }
 
-    public function authorized($baidu_shop_id)
+    public function authorized($baidu_shop_id, $source = null)
     {
         $bindUrl = 'http://dev.waimai.baidu.com/dev/norm/shopapplybind';
 
@@ -45,32 +45,70 @@ class Baidu
 
         // 读取配置信息
         $auth = config('baidutakeout.baidu.authorized');
-        // 获取一个未满 200 的 source
-        $client = new Client();
-        $res = $client->post(no_upper_limit_source_info_url());
-        $res = json_decode($res->getBody(), true);
+        $auth['wid'] = $baidu_shop_id;
+        // 授权
+        if (!$source) {
+            $loadResult = $this->loadOneSource($auth, $baidu_shop_id);
 
-        if ($res['status'] == 0) {
-            // 填写配置信息的 商户 ID
-            $auth['wid'] = $baidu_shop_id;
-            $auth['source'] = $res['data']['source'];
-
-            if ($res['data']['ka'] == 'yes') {
-                $auth['bindapply_type'] = 2;
+            // ka 用户，但是当前 source 已经达到了 200 限制
+            if ($loadResult === 'ka') {
+                return [];
             }
-        } else {
-            return false;
+
+            if (is_null($loadResult)) {
+                return null;
+            }
+
+            if ($loadResult === false || $loadResult == '') {
+                return false; // false
+            }
+        }
+        // 取消授权
+        else {
+            $auth['bindapply_type'] = 2;
+            $auth['auth_cmd_category'] = '';
         }
 
         // 请求登录接口，获取登录后的 cookie，存在 storage_path('cookie.txt') 文件中
         $this->setRequest($auth);
 
-        // 发送 申请 bind 请求
+        // 发送 bind 请求
         $res = $this->execCurl($bindUrl);
         $res = json_decode($res, true);
         $res['source'] = $auth['source'];
 
         return $res;
+    }
+
+    public function loadOneSource(&$auth, $baidu_shop_id)
+    {
+
+        // 获取一个未满 200 的 source
+        $client = new Client();
+        $res = $client->get(no_upper_limit_source_info_url() . '?baidu_shop_id=' . $baidu_shop_id);
+        $res = json_decode($res->getBody(), true);
+
+        switch ($res['status']) {
+            case 0:
+                // 填写配置信息的 商户 ID
+                $auth['source'] = $res['data']['source'];
+                return true;
+                break;
+            case 203:
+                if ($res['data']['audit_state'] == 'in_audit') {
+                    return null;
+                } elseif($res['data']['audit_state'] == 'completed') {
+                    $auth['source'] = $res['data']['source'];
+                    return true;
+                }
+                break;
+            case 202:
+                return $res['data']['state'];
+                break;
+            default:
+                return false;
+                break;
+        }
     }
 
     public function openOrderPush($baidu_shop_id, $source)

@@ -109,7 +109,7 @@ trait Order
 
         $data['errno'] = 0;
         $data['error'] = 'success';
-        return $this->buildCmd('resp.order.status.push', $data, 0);
+        return $this->setAuth($source)->buildCmd('resp.order.status.push', $data, 0);
     }
 
     private function printer($shopInfo, $detail, $order_id, $source)
