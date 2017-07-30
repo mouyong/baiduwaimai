@@ -82,28 +82,28 @@ class Baidu
 
     public function loadOneSource(&$auth, $baidu_shop_id)
     {
-
         // 获取一个未满 200 的 source
         $client = new Client();
         $res = $client->get(no_upper_limit_source_info_url() . '?baidu_shop_id=' . $baidu_shop_id);
         $res = json_decode($res->getBody(), true);
+        $data = $res['data'];
 
         switch ($res['status']) {
             case 0:
                 // 填写配置信息的 商户 ID
-                $auth['source'] = $res['data']['source'];
+                $auth['source'] = $data['source'];
                 return true;
                 break;
             case 203:
-                if ($res['data']['audit_state'] == 'in_audit') {
+                if ($data['audit_state'] == 'in_audit') {
                     return null;
-                } elseif($res['data']['audit_state'] == 'completed') {
-                    $auth['source'] = $res['data']['source'];
+                } elseif($data['audit_state'] == 'completed') {
+                    $auth['source'] = $data['source'];
                     return true;
                 }
                 break;
             case 202:
-                return $res['data']['state'];
+                return $data['state'];
                 break;
             default:
                 return false;

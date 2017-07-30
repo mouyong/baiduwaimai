@@ -66,7 +66,7 @@ class BaiduController extends Controller
                 $response['error'] = '未查找到该商户信息。你可能还未进行授权'; // shop not exist
                 $response['info'] = $res['body']['error']; // shop not exist
             }
-            return response()->json($response, JSON_UNESCAPED_UNICODE);
+            return response()->json($response);
         }
 
         // 获取百度响应的商家信息
