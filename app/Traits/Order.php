@@ -287,7 +287,7 @@ trait Order
      * @param array $order
      * @return bool
      */
-    public function isImmediately(array $order)
+    public static function isImmediately(array $order)
     {
         if ($order['order']['send_immediately'] == 1) {
             return true;
