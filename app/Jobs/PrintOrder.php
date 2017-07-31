@@ -51,7 +51,9 @@ class PrintOrder implements ShouldQueue
         info($query);
 
         // 调用打印接口，发送需要打印的数据
-        $client->request('POST', y_api_url(), ['body' => $query]);
+        if (\App::environment('production')) {
+            $client->request('POST', y_api_url(), ['body' => $query]);
+        }
 
         // 将此次打印的内容存入数据库
         dispatch((new OrderRecord($this->order_id, $this->content, $this->shopInfo))->onQueue('record'));

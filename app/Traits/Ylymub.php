@@ -486,10 +486,20 @@ class Ylymub
         $content .= '<FS2><center>--' . $data['pay_type'] . '--</center></FS2>' . $br;
         $content .= '<FS><center>' . $data['shop_name'] . '</center></FS>' . $br;
 
+        // 如果是预订单
+        if ($data['send_immediately'] == 2) {
+            $content .= '<FS><center>' . $data['book_order'] . '</center></FS>' . $br;
+        }
+
         // 下单时间
         $content .= $self->fs($data['confirm_time'], self::$font_size['create_order_size'], $version);
         // 订单编号
         $content .= $self->fs($data['order_id'], self::$font_size['order_size'], $version);
+        // 如果是预订单
+        if ($data['send_immediately'] == 2) {
+            $content .= $self->fs($data['send_time'], self::$font_size['default'] - 1, $version);
+        }
+
         $content .= str_repeat('*',14) . '商品' . str_repeat('*',14);
 
         // 获取 表格字体设置对应的标签

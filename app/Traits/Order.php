@@ -234,6 +234,14 @@ trait Order
         // 订单编号
         $data['order_id'] = '订单编号:' . $tmpData['order']['order_id'];
 
+        // 是否立即送达
+        $data['send_immediately'] = $tmpData['order']['send_immediately'];
+        // 预订单
+        if (! static::isImmediately($tmpData)) {
+            $data['book_order'] = '[ 预订单 ]';
+            $data['send_time'] = '期望送达时间:'.date('Y年m月d日H时i分', $tmpData['order']['send_time']);
+        }
+
         // 各个口袋对应的商品详情
         $data['product'] = self::getProduct($tmpData['products']);
 
@@ -271,6 +279,20 @@ trait Order
         $data['taxer']['invoice_title'] = $tmpData['order']['invoice_title'];
 
         return $data;
+    }
+
+    /**
+     * 是否立即送餐
+     *
+     * @param array $order
+     * @return bool
+     */
+    public function isImmediately(array $order)
+    {
+        if ($order['order']['send_immediately'] == 1) {
+            return true;
+        }
+        return false;
     }
 
     /**
