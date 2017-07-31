@@ -23,6 +23,6 @@ class ConfirmOrder implements ShouldQueue
 
     public function handle()
     {
-        return app('baidu', (array) $this->source)->confirm($this->order_id);
+        return app('baidu')->confirm($this->source, $this->order_id);
     }
 }

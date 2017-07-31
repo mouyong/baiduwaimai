@@ -12,13 +12,14 @@ trait Order
     /**
      * 确认订单
      *
+     * @param string $source
      * @param string $order_id
      * @return array
      */
-    public function confirm($order_id)
+    public function confirm($source, $order_id)
     {
-        $params = self::buildCmd('order.confirm', compact('order_id'));
-        return self::send($params);
+        $params = $this->setAuth($source)->buildCmd('order.confirm', compact('order_id'));
+        return $this->send($params);
     }
 
     /**
