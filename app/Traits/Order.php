@@ -162,32 +162,41 @@ trait Order
         // 检查是否有绑定打印机
         self::check_printer($shopInfo, $source);
 
-        // 订单版本对应内容
-        $order = [];
         // 同一台终端，同一份订单打印的次数
         $mn = $shopInfo['fonts_setting']['mn'];
+        // 如果是取消打印
+        if (!$isPrinter) {
+            $mn = 1;
+        }
 
         // 遍历用户的所有终端，根据终端版本，传输转化完成后的内容进行打印
         do {
-            foreach ($shopInfo['machines'] as $key => $machine) {
-                // 判断是否需要转换订单内容
-                if (!array_key_exists($machine['version'], $order)) {
-                    // 让打印机版本对上转换后的内容
-                    if ($isPrinter) {
-                        $content = self::orderPrinter($shopInfo, $detail, $key);
-                    } else {
-                        $content = self::orderCancelPrinter($shopInfo, $detail, $key);
-                    }
-                    $order[$machine['version']] = $content;
-                } else {
-                    // 已经转换过内容，直接取出来打印
-                    $content = $order[$machine['version']];
-                }
-
-                // 每处理完一个终端，就将订单进行打印
-                dispatch((new PrintOrder($shopInfo, $content, $key, $order_id, $source))->onQueue('print'));
-            }
+            self::notifyPrint($shopInfo, $detail, $order_id, $source, $isPrinter);
         } while (--$mn);
+    }
+
+    private function notifyPrint($shopInfo, $detail, $order_id, $source, $isPrinter)
+    {
+        // 订单版本对应内容
+        $order = [];
+        foreach ($shopInfo['machines'] as $key => $machine) {
+            // 判断是否需要转换订单内容
+            if (!array_key_exists($machine['version'], $order)) {
+                // 让打印机版本对上转换后的内容
+                if ($isPrinter) {
+                    $content = self::orderPrinter($shopInfo, $detail, $key);
+                } else {
+                    $content = self::orderCancelPrinter($shopInfo, $detail, $key);
+                }
+                $order[$machine['version']] = $content;
+            } else {
+                // 已经转换过内容，直接取出来打印
+                $content = $order[$machine['version']];
+            }
+
+            // 每处理完一个终端，就将订单进行打印
+            dispatch((new PrintOrder($shopInfo, $content, $key, $order_id, $source))->onQueue('print'));
+        }
     }
 
     private function check_printer($shopInfo, $source)
