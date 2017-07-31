@@ -469,11 +469,6 @@ class Ylymub
      */
     public static function getFormatMsg($data, $shopInfo, $key = 0)
     {
-        if (empty($shopInfo['machines'])) {
-            // todo 通知，未添加打印机。
-            return false;
-        }
-
         $version = $shopInfo['machines'][$key]['version'];
         $self = (new static);
         $self->setFontSize($shopInfo);
@@ -488,7 +483,7 @@ class Ylymub
 
         // 如果是预订单
         if ($data['send_immediately'] == 2) {
-            $content .= '<FS><center>' . $data['book_order'] . '</center></FS>' . $br;
+            $content .= '<FS><center>' . $data['pre_order'] . '</center></FS>' . $br;
         }
 
         // 下单时间
@@ -562,6 +557,42 @@ class Ylymub
 
         $content = self::contentformate($content, $version);
 
+        return $content;
+    }
+
+    public static function getCancelFormatMsg($data, $shopInfo, $key = 0)
+    {
+        $version = $shopInfo['machines'][$key]['version'];
+        $self = (new static);
+        $self->setFontSize($shopInfo);
+
+        $br = '\r';
+        $content = '';
+
+        $content .= '<FS2><center>**#' . $data['order_index'] . ' 百度 **</center></FS2>' . $br;
+        $content .= str_repeat('.',32) . $br;
+        $content .= '<FS2><center>--' . $data['pay_type'] . '--</center></FS2>' . $br;
+        $content .= '<FS><center>' . $data['shop_name'] . '</center></FS>' . $br;
+
+        // 如果是预订单
+        if ($data['send_immediately'] == 2) {
+            $content .= '<FS><center>' . $data['pre_order'] . '</center></FS>' . $br;
+        }
+
+        // 下单时间
+        $content .= $self->fs($data['confirm_time'], self::$font_size['create_order_size'], $version);
+        // 订单编号
+        $content .= $self->fs($data['order_id'], self::$font_size['order_size'], $version);
+        // 如果是预订单
+        if ($data['send_immediately'] == 2) {
+            $content .= $self->fs($data['send_time'], self::$font_size['default'] - 1, $version);
+        }
+
+        $content .= $self->fs('订单已取消', self::$font_size['default'] + 1, $version);
+
+        $content .='<FS2><center>** 完 **</center></FS2>';
+
+        $content = self::contentformate($content, $version);
         return $content;
     }
 }

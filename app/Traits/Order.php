@@ -108,11 +108,12 @@ trait Order
                 // 打印订单，存储订单
                 self::printer($shopInfo, $detail, $body['order_id'], $source);
                 break;
-            case 9:
-            case 10:
-                if (\Cache::has('bdwm:order:'.$body['order_id'])) {
-                    \Cache::forget('bdwm:order:'.$body['order_id']);
-                }
+            case 9: // 已完成
+                $this->cleanOrder($body['order_id']);
+                break;
+            case 10: // 已取消
+                self::printer($shopInfo, $detail, $body['order_id'], $source, false);
+                $this->cleanOrder($body['order_id']);
                 break;
         }
 
@@ -121,7 +122,42 @@ trait Order
         return $this->setAuth($source)->buildCmd('resp.order.status.push', $data, 0);
     }
 
-    private function printer($shopInfo, $detail, $order_id, $source)
+    private function cleanOrder($order_id)
+    {
+        if (\Cache::has('bdwm:order:'.$order_id)) {
+            \Cache::forget('bdwm:order:'.$order_id);
+        }
+    }
+
+    private function orderCancelPrinter($shopInfo, $detail, $key)
+    {
+
+        $tmpData = $detail['data'];
+
+        // 订单当日流水号
+        $data['order_index'] = $tmpData['order']['order_index'];
+
+        $content = Ylymub::getCancelFormatMsg(
+        // 从订单详情中获取需要格式化的数据
+            self::getPrintData($detail),
+            $shopInfo,
+            $key
+        );
+        return $content;
+    }
+
+    private function orderPrinter($shopInfo, $detail, $key)
+    {
+        $content = Ylymub::getFormatMsg(
+        // 从订单详情中获取需要格式化的数据
+            self::getPrintData($detail),
+            $shopInfo,
+            $key
+        );
+        return $content;
+    }
+
+    private function printer($shopInfo, $detail, $order_id, $source, $isPrinter = true)
     {
         // 检查是否有绑定打印机
         self::check_printer($shopInfo, $source);
@@ -137,12 +173,11 @@ trait Order
                 // 判断是否需要转换订单内容
                 if (!array_key_exists($machine['version'], $order)) {
                     // 让打印机版本对上转换后的内容
-                    $content  = Ylymub::getFormatMsg(
-                        // 从订单详情中获取需要格式化的数据
-                        self::getPrintData($detail),
-                        $shopInfo,
-                        $key
-                    );
+                    if ($isPrinter) {
+                        $content = self::orderPrinter($shopInfo, $detail, $key);
+                    } else {
+                        $content = self::orderCancelPrinter($shopInfo, $detail, $key);
+                    }
                     $order[$machine['version']] = $content;
                 } else {
                     // 已经转换过内容，直接取出来打印
@@ -153,8 +188,6 @@ trait Order
                 dispatch((new PrintOrder($shopInfo, $content, $key, $order_id, $source))->onQueue('print'));
             }
         } while (--$mn);
-
-        \Cache::forget('bdwm:order:'.$order_id);
     }
 
     private function check_printer($shopInfo, $source)
@@ -238,7 +271,7 @@ trait Order
         $data['send_immediately'] = $tmpData['order']['send_immediately'];
         // 预订单
         if (! static::isImmediately($tmpData)) {
-            $data['book_order'] = '[ 预订单 ]';
+            $data['pre_order'] = '[ 预订单 ]';
             $data['send_time'] = '期望送达时间:'.date('Y年m月d日H时i分', $tmpData['order']['send_time']);
         }
 
