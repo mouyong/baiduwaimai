@@ -588,8 +588,7 @@ class Ylymub
             $content .= $self->fs($data['send_time'], self::$font_size['default'] - 1, $version);
         }
 
-        $content .= $self->fs('订单已取消', self::$font_size['default'] + 1, $version);
-
+        $content .='<FS2><center>订单已取消</center></FS2>' . $br;
         $content .='<FS2><center>** 完 **</center></FS2>';
 
         $content = self::contentformate($content, $version);
