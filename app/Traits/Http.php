@@ -24,7 +24,6 @@ trait Http
         if (!$this->api_url) {
             $this->api_url($url);
         }
-
         $response = $this->client->post($this->api_url, [
             'form_params' => $option
         ]);

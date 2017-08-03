@@ -75,4 +75,54 @@ class BaiduController extends Controller
         // 过滤商家信息，并进行响应
         return $this->baidu->getShopResponse($response);
     }
+
+    public function shopCreate($shop_id, $source)
+    {
+        $this->baidu->setTestShop($shop_id);
+        return $this->baidu->shopCreate($source);
+    }
+
+    public function shopUpdate($shop_id, $source)
+    {
+        $this->baidu->setTestShop($shop_id);
+        return $this->baidu->shopUpdate($source);
+    }
+
+    public function shopGet($shop_id, $source)
+    {
+        return $this->baidu->shopGet($shop_id, $source);
+    }
+
+    public function aptitudeGet($shop_id, $source)
+    {
+        return $this->baidu->aptitudeGet($shop_id, $source);
+    }
+
+    public function aptitudeUpload($shop_id, $source)
+    {
+        $this->baidu->setAptitude($shop_id);
+        return $this->baidu->aptitudeUpload($source);
+    }
+
+    public function dishCreate($shop_id, $source)
+    {
+        $this->baidu->setDish($shop_id);
+        return $this->baidu->dishCreate($source);
+    }
+
+    public function dishUpdate($shop_id, $source)
+    {
+        $this->baidu->setDish($shop_id);
+        return $this->baidu->dishUpdate($source);
+    }
+
+    public function dishMenu($shop_id, $source)
+    {
+        return $this->baidu->dishMenu($shop_id, $source);
+    }
+
+    public function dishOnline($shop_id, $dish_id, $source)
+    {
+        return $this->baidu->dishOnline($shop_id, $dish_id, $source);
+    }
 }

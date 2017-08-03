@@ -3,11 +3,13 @@
 namespace Baidu;
 
 use App\Traits\Order;
+use App\Traits\KaTestShop;
+use App\Traits\Dish;
 use GuzzleHttp\Client;
 
 class Baidu
 {
-    use Order;
+    use Dish, Order, KaTestShop;
 
     public $source;
     public $secret;
@@ -85,6 +87,8 @@ class Baidu
         // 获取一个未满 200 的 source
         $client = new Client();
         $res = $client->get(no_upper_limit_source_info_url() . '?baidu_shop_id=' . $baidu_shop_id);
+        // dd(no_upper_limit_source_info_url() . '?baidu_shop_id=' . $baidu_shop_id);
+
         $res = json_decode($res->getBody(), true);
         $data = $res['data'];
 
@@ -141,6 +145,16 @@ class Baidu
         $response = array_only($response, 'body');
 
         return $response['body'];
+    }
+
+    public function createShop()
+    {
+        return $this->shopCreate();
+    }
+
+    public function createDish()
+    {
+        return $this->dishCreate();
     }
 
     /**
@@ -229,7 +243,7 @@ class Baidu
 
     protected function api_url()
     {
-        if (func_num_args() == 1) {
+        if (func_num_args() == 1 && !empty(func_get_arg(0))) {
             $this->api_url = func_get_arg(0);
         } else {
             $this->api_url = bd_api_url();

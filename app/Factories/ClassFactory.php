@@ -2,6 +2,7 @@
 
 namespace App\Factories;
 
+use Illuminate\Support\Facades\Input;
 use App\Http\Controllers\OrderController;
 
 class ClassFactory
@@ -13,6 +14,11 @@ class ClassFactory
         switch ($cmd) {
             case 'order.create':
                 return $order->order();
+                break;
+            case 'order.confirm':
+                $source = Input::get('source');
+                $order_id = Input::get('order_id');
+                return $order->confirm($source, $order_id);
                 break;
             case 'order.cancel':
                 return $order->cancel();
