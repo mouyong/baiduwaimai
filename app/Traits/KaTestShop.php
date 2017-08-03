@@ -6,10 +6,10 @@ trait KaTestShop
 {
     protected $testShop;
 
-    public function setTestShop($shop_id)
+    public function setTestShop($supplier_id)
     {
         $this->testShop = config('test_shop');
-        $this->testShop['shop_id'] = $shop_id;
+        $this->testShop['supplier_id'] = $supplier_id;
     }
 
     public function getTestShop()

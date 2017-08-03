@@ -74,8 +74,8 @@ $business_time = [
 ];
 
 return [
-    'supplier_id' => 2037537404,
-    'shop_id' => 2071112241,
+    'supplier_id' => '',
+    'shop_id' => 666,
     'name' => '百度外卖lgz6',
     'shop_logo' => 'http://api.waimai.baidu.com/WebImage/SupplierImage/2521/s09100000000.jpg',
     'province' => '23',

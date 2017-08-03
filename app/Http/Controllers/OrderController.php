@@ -21,6 +21,8 @@ class OrderController extends Controller
      */
     public function order()
     {
+        $source_order_id = uuid();
+
         $input = Input::all();
 
         $source = source($input['source']);
@@ -48,8 +50,8 @@ class OrderController extends Controller
             \Cache::forget('bdwm:shop:'. $this->baidu->shop_id);
         }
 
-        $source_order_id = uuid();
-        return $this->baidu->setAuth($source)->buildRes('resp.order.create', compact('source_order_id'), 0);
+        $res = $this->baidu->setAuth($source)->buildRes('resp.order.create', compact('source_order_id'), 0);
+        return $res;
     }
 
     public function __call($method, $parameters)

@@ -76,9 +76,9 @@ class BaiduController extends Controller
         return $this->baidu->getShopResponse($response);
     }
 
-    public function shopCreate($shop_id, $source)
+    public function shopCreate($supplier_id, $source)
     {
-        $this->baidu->setTestShop($shop_id);
+        $this->baidu->setTestShop($supplier_id);
         return $this->baidu->shopCreate($source);
     }
 

@@ -41,7 +41,7 @@ return [
     'pic' => 'http://img.waimai.baidu.com/pb/d2dc661dc90a269ee7fb7ffb66a3bcf0df',
     'min_order_num' => 1,
     'package_box_num' => 1,
-    'description' => '双黄吗',
+    'description' => '双黄蛋',
     'available_times' => $available_times,
     'stock' => 100,
     'category' => $category,

@@ -327,7 +327,7 @@ class Baidu
                 return $data;
             }
             $res = $this->send(['baidu_shop_id' => $data], bdwm_info_url());
-            if ($res['status'] == 0) {
+            if (isset($res['status']) && $res['status'] == 0) {
                 return $res['data'];
             }
         });
