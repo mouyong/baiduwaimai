@@ -37,7 +37,7 @@ trait Order
     {
         $source = Input::get('source');
 
-        $body['order_id'] = Input::get('order_id');
+        $body['order_id'] = json_decode(Input::get('body'), true)['order_id'];
         $body['type'] = $type;
         $body['reason '] = $reason;
 
