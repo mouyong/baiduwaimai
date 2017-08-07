@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class Record extends Model
 {
     protected $guarded = ['id'];
-    // protected $table = 'recoreds_new';
 
     public function scopeOrderId($query, $orderId)
     {
