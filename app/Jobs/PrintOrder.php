@@ -16,7 +16,6 @@ class PrintOrder implements ShouldQueue
     public $shopInfo;
     public $content;
     public $key;
-    public $order_id;
     public $source;
 
     /**
@@ -25,14 +24,12 @@ class PrintOrder implements ShouldQueue
      * @param array $shopInfo
      * @param string $content
      * @param int $key 当前执行打印的终端是 machine 中的 第几个终端，需要根据这个取出终端的 mkey，msing 等相关信息
-     * @param string $order_id
      */
-    public function __construct(array $shopInfo, $content = '', $key = 0, $order_id)
+    public function __construct(array $shopInfo, $content = '', $key = 0)
     {
         $this->shopInfo = $shopInfo;
         $this->content = $content;
         $this->key = $key;
-        $this->order_id = $order_id;
     }
 
     /**
@@ -55,9 +52,6 @@ class PrintOrder implements ShouldQueue
         // if (\App::environment('production', 'local')) {
             $client->request('POST', y_api_url(), ['body' => $query]);
         }
-
-        // 将此次打印的内容存入数据库
-        dispatch((new OrderRecord($this->order_id, $this->content, $this->shopInfo))->onQueue('record'));
         return true;
     }
 }

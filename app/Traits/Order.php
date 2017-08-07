@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use App\Jobs\PrintOrder;
+use App\Jobs\OrderRecord;
 use Illuminate\Support\Facades\Input;
 
 trait Order
@@ -175,6 +176,22 @@ trait Order
         do {
             self::notifyPrint($shopInfo, $detail, $order_id, $source, $isPrinter);
         } while (--$mn);
+
+        $this->notifyRecord($order_id, $detail, $shopInfo, $source);
+    }
+
+    public function notifyRecord($order_id, $detail, $shopInfo, $source)
+    {
+        $data = [
+            'order_id' => $order_id,
+            'order_detail' => json_encode($detail),
+            'baidu_shop_id' => $shopInfo['baidu_shop_id'],
+            'source' => $source,
+            'secret' => secret_key($source),
+            'user_id' => $shopInfo['user_id'],
+        ];
+        // 订单ID 订单原始详情 百度商户ID source secret 易联云用户ID
+        dispatch((new OrderRecord($data))->onQueue('record'));
     }
 
     private function notifyPrint($shopInfo, $detail, $order_id, $source, $isPrinter)

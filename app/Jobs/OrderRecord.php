@@ -13,22 +13,16 @@ class OrderRecord implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $order_id;
-    public $content;
-    public $shopInfo;
+    public $data;
 
     /**
      * OrderRecord constructor.
      *
-     * @param string $order_id
-     * @param string $content
-     * @param array $shopInfo
+     * @param array $data
      */
-    public function __construct($order_id, $content, array $shopInfo)
+    public function __construct($data)
     {
-        $this->order_id = $order_id;
-        $this->content = $content;
-        $this->shopInfo = $shopInfo;
+        $this->data = $data;
     }
 
     /**
@@ -38,16 +32,13 @@ class OrderRecord implements ShouldQueue
      */
     public function handle()
     {
-        $data['order_id'] = $this->order_id;
-        $data['content'] = $this->content;
-        $data['baidu_shop_id'] = $this->shopInfo['baidu_shop_id'];
-        $data['yilianyun_user_id'] = $this->shopInfo['user_id'];
-        $data['yilianyun_api_key'] = $this->shopInfo['api_key'];
-        $data['machines'] = json_encode($this->shopInfo['machines']);
-        $data['fonts_setting'] = json_encode($this->shopInfo['fonts_setting']);
-        $data['raw'] = json_encode($this->shopInfo);
-
-        Record::create($data);
+        $data = Record::orderId($this->data['order_id'])->first();
+        if ($data) {
+            $duplicate_count = $data['duplicate_count'] + 1;
+            Record::orderId($this->data['order_id'])->update(compact('duplicate_count'));
+        } else {
+            Record::create($this->data);
+        }
         return true;
     }
 }
