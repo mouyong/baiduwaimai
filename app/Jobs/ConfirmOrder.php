@@ -12,17 +12,15 @@ class ConfirmOrder implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $order_id;
-    public $source;
-
-    public function __construct($order_id, $source)
+    public $data;
+    
+    public function __construct($data)
     {
-        $this->order_id = $order_id;
-        $this->source = $source;
+        $this->data = $data;
     }
 
     public function handle()
     {
-        return app('baidu', (array) $this->source)->confirm($this->source, $this->order_id);
+        return app('baidu', (array) $this->data['source'])->confirm($this->data['source'], $this->data['order_id']);
     }
 }

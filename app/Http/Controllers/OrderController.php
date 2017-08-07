@@ -37,13 +37,14 @@ class OrderController extends Controller
         $shop = $this->baidu->shopInfoFromCache(
             $this->baidu->shop_id
         );
+        $data['order_id'] = $detail['data']['order']['order_id']
+        $data['source'] = $source;
 
         if (!is_null($shop)) {
             // 自动接单
             if ($shop['order_auto_confirm'] == 'yes') {
                 $this->dispatch((new ConfirmOrder(
-                    $detail['data']['order']['order_id'],
-                    $source
+                    $data
                 ))->onQueue('confirm'));
             }
         } else {
