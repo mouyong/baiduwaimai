@@ -24,6 +24,7 @@ trait Order
     public function confirm($source, $order_id)
     {
         $params = $this->setAuth($source)->buildCmd('order.confirm', compact('order_id'));
+        info($params);
         return $this->send($params);
     }
 

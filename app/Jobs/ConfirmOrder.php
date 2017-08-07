@@ -16,7 +16,7 @@ class ConfirmOrder implements ShouldQueue
     public $orderId;
     public $source;
 
-    public function __construct($data, $orderId, $source)
+    public function __construct($source, $orderId, $data)
     {
         $this->data = $data;
         $this->orderId = $orderId;
@@ -25,7 +25,7 @@ class ConfirmOrder implements ShouldQueue
 
     public function handle()
     {
-        $baidu = app('baidu');
-        return $baidu->confirm($this->orderId, $this->source);
+        app('baidu')->confirm($this->source, $this->orderId);
+        return true;
     }
 }

@@ -44,9 +44,9 @@ class OrderController extends Controller
             // 自动接单
             if ($shop['order_auto_confirm'] == 'yes') {
                 $this->dispatch((new ConfirmOrder(
-                    $data,
+                    $source,
                     $detail['data']['order']['order_id'],
-                    $source
+                    $data
                 ))->onQueue('confirm'));
             }
         } else {
