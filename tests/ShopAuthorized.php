@@ -18,7 +18,7 @@ class ShopAuthorized extends TestCase
 
     public function testAuthorized()
     {
-         $response = $this->post('api/shop.authorized/' . $this->shop_id);
-         $response->assertStatus(200);
+        $response = $this->post('api/shop.authorized/' . $this->shop_id);
+        $response->assertStatus(200);
     }
 }

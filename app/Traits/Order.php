@@ -9,6 +9,10 @@ trait Order
 {
     use Http;
 
+    /** @var integer 缓存有效期 24 h * 60 m */
+    protected $expire = 1440;
+
+
     /**
      * 确认订单
      *
@@ -132,15 +136,13 @@ trait Order
 
     private function orderCancelPrinter($shopInfo, $detail, $key)
     {
-
         $tmpData = $detail['data'];
 
         // 订单当日流水号
         $data['order_index'] = $tmpData['order']['order_index'];
 
         $content = Ylymub::getCancelFormatMsg(
-        // 从订单详情中获取需要格式化的数据
-            self::getPrintData($detail),
+            self::getPrintData($detail), // 从订单详情中获取需要格式化的数据
             $shopInfo,
             $key
         );
@@ -150,8 +152,7 @@ trait Order
     private function orderPrinter($shopInfo, $detail, $key)
     {
         $content = Ylymub::getFormatMsg(
-        // 从订单详情中获取需要格式化的数据
-            self::getPrintData($detail),
+            self::getPrintData($detail), // 从订单详情中获取需要格式化的数据
             $shopInfo,
             $key
         );
@@ -161,7 +162,7 @@ trait Order
     private function printer($shopInfo, $detail, $order_id, $source, $isPrinter = true)
     {
         // 检查是否有绑定打印机
-        self::check_printer($shopInfo, $source);
+        self::checkPrinter($shopInfo, $source);
 
         // 同一台终端，同一份订单打印的次数
         $mn = $shopInfo['fonts_setting']['mn'];
@@ -200,7 +201,7 @@ trait Order
         }
     }
 
-    private function check_printer($shopInfo, $source)
+    private function checkPrinter($shopInfo, $source)
     {
         // 店家没有易联云打印机，无法打印
         if (!$shopInfo['machines']) {
@@ -219,9 +220,9 @@ trait Order
         }
     }
 
-    public function loadShopFrom($baidu_shop_id, $source, $expire = 3600)
+    public function loadShopFrom($baidu_shop_id, $source)
     {
-        return \Cache::remember('baidu:shop:detail:' . $baidu_shop_id, $expire, function () use ($baidu_shop_id, $source) {
+        return \Cache::remember('baidu:shop:detail:' . $baidu_shop_id, $this->expire, function () use ($baidu_shop_id, $source) {
             return app('baidu', (array) $source)->getShopInfo($baidu_shop_id)['body']['data'];
         });
     }
@@ -235,14 +236,14 @@ trait Order
      * @param string $cache_key
      * @return mixed
      */
-    public function detailFromCache($order_id, $source, $expire = 60, $cache_key = 'bdwm:order:')
+    public function detailFromCache($order_id, $source, $cache_key = 'bdwm:order:')
     {
         if (!$order_id) {
             throw new \InvalidArgumentException('Parameter missing order id');
         }
 
         $cache_key .= $order_id;
-        return \Cache::remember($cache_key, $expire, function () use ($order_id, $source) {
+        return \Cache::remember($cache_key, $this->expire, function () use ($order_id, $source) {
             $response = self::send(
                 self::setAuth($source)->buildCmd('order.get', compact('order_id'))
             );
@@ -299,7 +300,7 @@ trait Order
         // 优惠总金额
         $data['discount_fee'] = '折扣:￥' . getNumber($tmpData['order']['discount_fee']);
 
-        $first_name = mb_substr($tmpData['user']['name'],0,1);
+        $first_name = mb_substr($tmpData['user']['name'], 0, 1);
         $nickname = ($tmpData['user']['gender'] === 1) ? '(先生)' : '(女士)';
 
         $data['user_fee'] = '订单总价:￥' . getNumber($tmpData['order']['user_fee']);
@@ -344,7 +345,8 @@ trait Order
      * @param array $tmpdata
      * @return array
      */
-    private static function getProduct(array $tmpdata) {
+    private static function getProduct(array $tmpdata)
+    {
         $data = [];
         foreach ($tmpdata as $num => $item) {
             foreach ($item as $product) {
@@ -391,7 +393,6 @@ trait Order
                     $str .= 'x' . $value['product_amount'] . '[]';
                     // 产品份数所对应的总价
                     $str .= getNumber($value['product_fee']) . '{}';
-
                 }
             }
         }

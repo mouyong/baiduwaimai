@@ -24,16 +24,16 @@ $factory->define(App\Models\User::class, function (Faker\Generator $faker) {
 });
 
 $factory->define(App\Models\User::class, 'admin', function (Faker\Generator $faker) {
-   return array (
+    return array(
        'id' => '3',
        'user_id' => '626',
        'baidu_shop_id' => '1717041709',
        'order_auto_confirm' => 'yes',
        'api_key' => '8c61ff8e4d1b6ed9930f6cb21029f67df630f92a',
        'machines' =>
-           array (
+           array(
                0 =>
-                   array (
+                   array(
                        'id' => '79987',
                        'mkey' => '1400450905',
                        'msign' => 'enck2sfnujen',
@@ -41,7 +41,7 @@ $factory->define(App\Models\User::class, 'admin', function (Faker\Generator $fak
                    ),
            ),
        'fonts_setting' =>
-           array (
+           array(
                'receive_info_size' => '2',
                'receive_address_size' => '1',
                'order_size' => '1',

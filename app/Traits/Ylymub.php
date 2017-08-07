@@ -189,9 +189,9 @@ class Ylymub
         $newstr = '';
         if ($alen == 32) {
             $newstr = self::gettable(18, 14, $str, $version);
-        } else if ($alen == 24) {
+        } elseif ($alen == 24) {
             $newstr = self::gettable(14, 10, $str, $version);
-        } else if ($alen == 16) {
+        } elseif ($alen == 16) {
             $newstr = self::gettable(6, 10, $str, $version);
         }
         return $newstr;
@@ -287,9 +287,9 @@ class Ylymub
             } else {
                 if ($size == 1) {
                     $msg = self::getMsg($strlen, 32, $str);
-                } else if ($size == 2) {
+                } elseif ($size == 2) {
                     $msg = '<' . self::$fs . '>' . self::getMsg($strlen, 24, $str) . '</' . self::$fs . '>';
-                } else if ($size == 3) {
+                } elseif ($size == 3) {
                     $msg = '<' . self::$fs . '2' . '>' . self::getMsg($strlen, 16, $str) . '</' . self::$fs . '2' . '>';
                 }
             }
@@ -303,9 +303,9 @@ class Ylymub
             } else {
                 if ($size == 1) {
                     $msg = $str;
-                } else if ($size == 2) {
+                } elseif ($size == 2) {
                     $msg = '<' . self::$fs . '>' . $str . '</' . self::$fs . '>';
-                } else if ($size == 3) {
+                } elseif ($size == 3) {
                     $msg = '<' . self::$fs . '2' . '>' . $str . '</' . self::$fs . '2' . '>';
                 }
             }
@@ -333,11 +333,11 @@ class Ylymub
                 if ($version == 1) {
                     if ($size == 1) {
                         $msg = self::getMsgs(32, $str[$i], $version);
-                    } else if ($size == 2) {
+                    } elseif ($size == 2) {
                         $FSa = '<' . self::$fs . '>';
                         $FSb = '</' . self::$fs . '>';
                         $msg = $FSa . self::getMsgs(24, $str[$i], $version) . $FSb;
-                    } else if ($size == 3) {
+                    } elseif ($size == 3) {
                         $FSa = '<' . self::$fs . '2' . '>';
                         $FSb = '</' . self::$fs . '2' . '>';
                         $msg = $FSa . self::getMsgs(16, $str[$i], $version) . $FSb;
@@ -363,7 +363,7 @@ class Ylymub
     {
         if ($version == 0 || $version == 1) {
             $length = 32;
-        } else if ($version == 2) {
+        } elseif ($version == 2) {
             $length = 48;
         } else {
             $length = 32;
@@ -371,10 +371,10 @@ class Ylymub
         if ($size == 1) {
             $mul = 1;
             $fnum = '';
-        } else if ($size == 2) {
+        } elseif ($size == 2) {
             $mul = 4/3;
             $fnum = '';
-        } else if ($size == 3) {
+        } elseif ($size == 3) {
             $mul = 2;
             $fnum = 2;
         } else {
@@ -394,7 +394,6 @@ class Ylymub
             } else {
                 $str = $temStr . "<FS" . $fnum . ">" . $str . '</FS' . $fnum . ">";
             }
-
         } else {
             $str = "<FS" . $fnum . ">" . $str . '</FS' . $fnum . ">";
         }
@@ -437,11 +436,10 @@ class Ylymub
             if ($size == 1) {
                 $FS1 = '';
                 $FS2 = '';
-            } else if ($size == 2) {
-
+            } elseif ($size == 2) {
                 $FS1 = '<' . $n . '>';
                 $FS2 = '</' . $n . '>';
-            } else if ($size == 3) {
+            } elseif ($size == 3) {
                 $FS1 = '<' . $n . '2' . '>';
                 $FS2 = '</' . $n . '2' . '>';
             }
@@ -451,9 +449,9 @@ class Ylymub
             if ($size == 1) {
                 $FS = '';
             } else {
-                $arr = TableFormat::mbStrSplit($option,32);
+                $arr = TableFormat::mbStrSplit($option, 32);
                 $FS = '@@2';
-                $option = implode('@@2',$arr);
+                $option = implode('@@2', $arr);
             }
             return $FS . $option . "\n";
         }
@@ -477,7 +475,7 @@ class Ylymub
         $content = '';
 
         $content .= '<FS2><center>**#' . $data['order_index'] . ' 百度 **</center></FS2>' . $br;
-        $content .= str_repeat('.',32) . $br;
+        $content .= str_repeat('.', 32) . $br;
         $content .= '<FS2><center>--' . $data['pay_type'] . '--</center></FS2>' . $br;
         $content .= '<FS><center>' . $data['shop_name'] . '</center></FS>' . $br;
 
@@ -495,7 +493,7 @@ class Ylymub
             $content .= $self->fs($data['send_time'], self::$font_size['default'] - 1, $version);
         }
 
-        $content .= str_repeat('*',14) . '商品' . str_repeat('*',14);
+        $content .= str_repeat('*', 14) . '商品' . str_repeat('*', 14);
 
         // 获取 表格字体设置对应的标签
         switch (self::$font_size['product_size']) {
@@ -524,13 +522,13 @@ class Ylymub
             $content .= $con . $tables . $msg . $tablee;
         }
 
-        $content .=  $br . str_repeat('-',32) . $br;
+        $content .=  $br . str_repeat('-', 32) . $br;
 
         // 配送费
         $content .= $data['send_fee'] . $br;
         // 餐盒费
         $content .= $data['package_fee'] . $br;
-        $content .= str_repeat('*',32) . $br;
+        $content .= str_repeat('*', 32) . $br;
         // 订单总价
         $content .= $self->fs($data['user_fee'], self::$font_size['default'], $version);
 
@@ -570,7 +568,7 @@ class Ylymub
         $content = '';
 
         $content .= '<FS2><center>**#' . $data['order_index'] . ' 百度 **</center></FS2>' . $br;
-        $content .= str_repeat('.',32) . $br;
+        $content .= str_repeat('.', 32) . $br;
         $content .= '<FS2><center>--' . $data['pay_type'] . '--</center></FS2>' . $br;
         $content .= '<FS><center>' . $data['shop_name'] . '</center></FS>' . $br;
 

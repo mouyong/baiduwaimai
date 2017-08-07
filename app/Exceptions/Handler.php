@@ -41,7 +41,7 @@ class Handler extends ExceptionHandler
         }
 
         // 不需要发送邮件的错误
-        if ($this->shouldntReport($exception)){
+        if ($this->shouldntReport($exception)) {
             return;
         }
 

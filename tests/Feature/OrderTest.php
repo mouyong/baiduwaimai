@@ -98,7 +98,7 @@ class OrderTest extends TestCase
         $response->assertJsonFragment($this->res);
     }
 
-//    /**
+    //    /**
 //     * 该部分代码，因未重构，运行效率差，耦合性高，暂时无法进行单元测试。需要通过 postman 人工进行测试。
 //     * 人工进行测试时，需要注释 Printer 任务中的发送打印 Job 与数据库写入 Job。提高效率
 //     *

@@ -101,7 +101,7 @@ class Baidu
             case 203:
                 if ($data['audit_state'] == 'in_audit') {
                     return null;
-                } elseif($data['audit_state'] == 'completed') {
+                } elseif ($data['audit_state'] == 'completed') {
                     $auth['source'] = $data['source'];
                     return true;
                 }
@@ -303,7 +303,8 @@ class Baidu
      * @param string $error
      * @return mixed
      */
-    public function buildRes($cmd, $data = array(), $encode = 1, $errno = 0, $error = 'success') {
+    public function buildRes($cmd, $data = array(), $encode = 1, $errno = 0, $error = 'success')
+    {
         $body['errno'] = $errno;
         $body['error'] = $error;
         $body['data']  = $data;
@@ -322,7 +323,7 @@ class Baidu
     public function shopInfoFromCache($data = null, $expire = 1440, $cache_key = 'bdwm:shop:')
     {
         $cache_key .= $this->shop_id;
-        return \Cache::remember($cache_key, $expire, function () use ($data){
+        return \Cache::remember($cache_key, $expire, function () use ($data) {
             if (is_array($data)) {
                 return $data;
             }

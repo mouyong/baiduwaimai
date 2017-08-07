@@ -52,7 +52,7 @@ class PrintOrder implements ShouldQueue
 
         // 调用打印接口，发送需要打印的数据
         if (\App::environment('production')) {
-//        if (\App::environment('production', 'local')) {
+        // if (\App::environment('production', 'local')) {
             $client->request('POST', y_api_url(), ['body' => $query]);
         }
 

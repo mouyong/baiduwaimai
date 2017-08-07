@@ -76,16 +76,16 @@ class JobTest extends TestCase
 
     public function shopInfo()
     {
-        return array (
+        return array(
             'id' => '186',
             'user_id' => '626',
             'baidu_shop_id' => '1717041709',
             'order_auto_confirm' => 'yes',
             'api_key' => '8c61ff8e4d1b6ed9930f6cb21029f67df630f92a',
             'machines' =>
-                array (
+                array(
                     0 =>
-                        array (
+                        array(
                             'id' => '79987',
                             'mkey' => '1400450905',
                             'msign' => 'enck2sfnujen',
@@ -93,7 +93,7 @@ class JobTest extends TestCase
                         ),
                 ),
             'fonts_setting' =>
-                array (
+                array(
                     'receive_info_size' => '2',
                     'receive_address_size' => '1',
                     'order_size' => '1',
@@ -129,7 +129,7 @@ class JobTest extends TestCase
         return 'machine_code=1400450905&partner=626&time=1500219177&sign=9795B8CB98301C1134DC537E47BDF353&content=%40%402++++++++++%2A%2A%231+%E7%99%BE%E5%BA%A6+%2A%2A%5Cn%5Cr................................%5Cr%40%402++++++++----%E8%B4%A7%E5%88%B0%E4%BB%98%E6%AC%BE----%5Cn%5Cr%40%402++++++++++++%E6%B5%8B%E8%AF%95%E8%90%A5%E9%94%802%5Cn%5Cr%E4%B8%8B%E5%8D%95%E6%97%B6%E9%97%B4%3A2017%E5%B9%B407%E6%9C%8806%E6%97%A511%E6%97%B636%E5%88%86%0A%E8%AE%A2%E5%8D%95%E7%BC%96%E5%8F%B7%3A14993121639797%0A%2A%2A%2A%2A%2A%2A%2A%2A%2A%2A%2A%2A%2A%2A%E5%95%86%E5%93%81%2A%2A%2A%2A%2A%2A%2A%2A%2A%2A%2A%2A%2A%2A++++++++++---1%E5%8F%B7%E5%8F%A3%E8%A2%8B---%5Cn%40%402%E5%90%8C%E6%AD%A5%E8%8F%9C++++++++++++x1+++++++10.00%5Cn%40%402Dan+++++++++++++++x1++++++++7.80%5Cn%5Cr--------------------------------%5Cr%E9%85%8D%E9%80%81%E8%B4%B9%3A5.00%5Cr%E9%A4%90%E7%9B%92%E8%B4%B9%3A4.00%5Cr%2A%2A%2A%2A%2A%2A%2A%2A%2A%2A%2A%2A%2A%2A%2A%2A%2A%2A%2A%2A%2A%2A%2A%2A%2A%2A%2A%2A%2A%2A%2A%2A%5Cr%40%402%E8%AE%A2%E5%8D%95%E6%80%BB%E4%BB%B7%3A%EF%BF%A526.80%0A%E8%8A%B1%E6%A0%B7%E5%B9%B4%C2%B7%E7%A6%8F%E5%B9%B4%E5%B9%BF%E5%9C%BA+1%0A%40%402%E7%89%9F%28%E5%85%88%E7%94%9F%29%3A+186-9834-9096%0A%40%402%E8%AE%A2%E5%8D%95%E5%A4%87%E6%B3%A8%EF%BC%9A%5B%E7%94%A8%E9%A4%90%E4%BA%BA%E6%95%B0%5D1%E4%BA%BA%EF%BC%9B%E4%B8%8D%E5%90%83%E8%BE%A3%2C%40%402%E5%B0%91%E6%94%BE%E7%9B%90%0A%40%402%E7%BA%B3%E7%A8%8E%E4%BA%BA%E8%AF%86%E5%88%AB%E5%8F%B7%EF%BC%9A.1225779624%0A%40%402%E5%8F%91%E7%A5%A8%E6%8A%AC%E5%A4%B4%EF%BC%9A%E5%8F%91%E7%A5%A8%E6%8A%AC%E5%A4%B4%E4%BF%A1%E6%81%AF%EF%BC%8C%E6%98%AF%E5%85%AC%E5%8F%B8%E5%90%8D%40%402%E7%A7%B0%E4%BB%80%E4%B9%88%E7%9A%84%0A%40%402%E5%95%86%E5%AE%B6%E7%95%99%E8%A8%80%EF%BC%9A%E3%80%8A%E5%9C%B0%E6%96%B9%E6%92%92%E3%80%8Balert%26lt%3B%3Fph%40%402p+echo+%24a%3B%3F%26gt%3B%0D%0A%26lt%3Bp%26gt%3Bthis+-%40%402%26amp%3Bgt%3B+%26amp%3Bquot%3B%26lt%3B%2Fp%26gt%3B%0A%40%402++++++++++++%2A%2A+%E5%AE%8C+%2A%2A%5Cn';
     }
 
-//    /**
+    //    /**
 //     * @param $job
 //     * @param $parameters
 //     * @param $queue

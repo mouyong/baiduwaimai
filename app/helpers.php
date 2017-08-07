@@ -77,7 +77,8 @@ function gen_baidu_sign(array $data)
  * @param string $content
  * @return array
  */
-function gen_y_sign_and_data($content, array $shopInfo, $key = 0) {
+function gen_y_sign_and_data($content, array $shopInfo, $key = 0)
+{
     $machine = $shopInfo['machines'][$key];
 
     $params['partner'] = $shopInfo['user_id'];
@@ -96,11 +97,13 @@ function gen_y_sign_and_data($content, array $shopInfo, $key = 0) {
     return $params;
 }
 
-function getNumber($data) {
+function getNumber($data)
+{
     return number_format($data / 100, 2);
 }
 
-function offset(&$str, array $offset, $delimiter = '-') {
+function offset(&$str, array $offset, $delimiter = '-')
+{
     foreach ($offset as $i => $v) {
         $str = mb_substr_replace($str, $delimiter, $i + $v, 0);
     }
@@ -108,8 +111,8 @@ function offset(&$str, array $offset, $delimiter = '-') {
 }
 
  function font_size($key)
-{
-    $font['confirm_time'] = 1; // 下单时间字体大小
+ {
+     $font['confirm_time'] = 1; // 下单时间字体大小
     $font['order_id'] = 1; // 订单号字体大小
     $font['address'] = 2; // 收货人地址字体大小
     $font['info'] = 2; // 收货信息字体大小
@@ -120,8 +123,8 @@ function offset(&$str, array $offset, $delimiter = '-') {
 
     $font['default'] = 2;
 
-    return $font[$key];
-}
+     return $font[$key];
+ }
 
 function uuid($offset = [8,12,16,20])
 {
@@ -131,7 +134,8 @@ function uuid($offset = [8,12,16,20])
     return strtoupper($str);
 }
 
-function mb_substr_replace($string, $replacement, $start, $length = NULL) {
+function mb_substr_replace($string, $replacement, $start, $length = null)
+{
     if (is_array($string)) {
         $num = count($string);
         // $replacement
@@ -139,22 +143,21 @@ function mb_substr_replace($string, $replacement, $start, $length = NULL) {
         // $start
         if (is_array($start)) {
             $start = array_slice($start, 0, $num);
-            foreach ($start as $key => $value)
+            foreach ($start as $key => $value) {
                 $start[$key] = is_int($value) ? $value : 0;
-        }
-        else {
+            }
+        } else {
             $start = array_pad(array($start), $num, $start);
         }
         // $length
         if (!isset($length)) {
             $length = array_fill(0, $num, 0);
-        }
-        elseif (is_array($length)) {
+        } elseif (is_array($length)) {
             $length = array_slice($length, 0, $num);
-            foreach ($length as $key => $value)
+            foreach ($length as $key => $value) {
                 $length[$key] = isset($value) ? (is_int($value) ? $value : $num) : 0;
-        }
-        else {
+            }
+        } else {
             $length = array_pad(array($length), $num, $length);
         }
         // Recursive call
@@ -162,7 +165,9 @@ function mb_substr_replace($string, $replacement, $start, $length = NULL) {
     }
     preg_match_all('/./us', (string)$string, $smatches);
     preg_match_all('/./us', (string)$replacement, $rmatches);
-    if ($length === NULL) $length = mb_strlen($string);
+    if ($length === null) {
+        $length = mb_strlen($string);
+    }
     array_splice($smatches[0], $start, $length, $rmatches[0]);
     return join($smatches[0]);
 }

@@ -97,8 +97,6 @@ trait TableFormat
         }
         $message = $message . $p3;
         return $message;
-
-
     }
 
     /**
