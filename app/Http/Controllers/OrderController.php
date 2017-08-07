@@ -37,7 +37,7 @@ class OrderController extends Controller
         $shop = $this->baidu->shopInfoFromCache(
             $this->baidu->shop_id
         );
-        $data['order_id'] = $detail['data']['order']['order_id']
+        $data['order_id'] = $detail['data']['order']['order_id'];
         $data['source'] = $source;
 
         if (!is_null($shop)) {
