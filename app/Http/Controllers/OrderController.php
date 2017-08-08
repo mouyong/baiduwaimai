@@ -26,10 +26,17 @@ class OrderController extends Controller
 
         $input = Input::all();
 
-        $getDetail = $input['getDetail']??'';
+        $getDetail = first_no_null($input['getDetail']);
 
         $source = source($input['source']) ?: $input['source'];
-        $secret = secret_key($input['source']) ?? $input['secret'] ?? '';
+
+        if (is_null($source)) {
+            throw new \InvalidArgumentException("Unknow source");
+        }
+
+        $secret = secret_key($source);
+
+        $secret = first_no_null($secret, first_no_null($input['secret']));
 
         // 获取数据
         $body = json_decode($input['body'], true);
