@@ -2,13 +2,15 @@
 
 use Illuminate\Support\Facades\Input;
 
-Route::post('/order', function () {
+Route::match(['get', 'post'], '/order', function () {
     return apply_method(Input::get('cmd'));
 });
 
-Route::get('/order', function () {
-    return ['errno' => 403, 'error' => 'unauthorized action.'];
-});
+// Route::get('/order', function () {
+//     return ['errno' => 403, 'error' => 'unauthorized action.'];
+// });
+
+Route::get('order.reprint/{order_id}', 'OrderController@reprint');
 
 Route::post('/notify/{id}', 'BaiduController@notify');
 Route::post('/shop.get/{shop_id}/{source}', 'BaiduController@shop');

@@ -25,6 +25,7 @@ trait Order
     {
         $params = $this->setAuth($source)->buildCmd('order.confirm', compact('order_id'));
         info($params);
+        
         return $this->send($params);
     }
 
@@ -254,17 +255,23 @@ trait Order
      * @param string $cache_key
      * @return mixed
      */
-    public function detailFromCache($order_id, $source, $cache_key = 'bdwm:order:')
+    public function detailFromCache($order_id, $source, $secret = '', $cache_key = 'bdwm:order:')
     {
         if (!$order_id) {
             throw new \InvalidArgumentException('Parameter missing order id');
         }
 
         $cache_key .= $order_id;
-        return \Cache::remember($cache_key, $this->expire, function () use ($order_id, $source) {
+        if (!empty($secret)) {
+            \Cache::forget($cache_key);
+        }
+        return \Cache::remember($cache_key, $this->expire, function () use ($order_id, $source, $secret) {
+            $auth = empty($secret) ? self::setAuth($source) : self::source($source)->secret_key($secret);
+            
             $response = self::send(
-                self::setAuth($source)->buildCmd('order.get', compact('order_id'))
+                $auth ->buildCmd('order.get', compact('order_id'))
             );
+
             if ($response['body']['errno'] == 0) {
                 return $response['body'];
             }

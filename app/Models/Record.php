@@ -2,14 +2,17 @@
 
 namespace App\Models;
 
+use App\Models\Traits\OrderTrait;
 use Illuminate\Database\Eloquent\Model;
 
 class Record extends Model
 {
     protected $guarded = ['id'];
 
-    public function scopeOrderId($query, $orderId)
+    use OrderTrait;
+
+    public function shop()
     {
-        return $query->where('order_id', $orderId);
+        return $this->belongsTo(BaiduShop::class, 'baidu_shop_id', 'baidu_shop_id');
     }
 }

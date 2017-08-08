@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\ConfirmOrder;
+use App\Models\Record;
 use Baidu\Baidu;
 use Illuminate\Support\Facades\Input;
 
@@ -25,18 +26,27 @@ class OrderController extends Controller
 
         $input = Input::all();
 
-        $source = source($input['source']);
+        $getDetail = $input['getDetail']??'';
+
+        $source = source($input['source']) ?: $input['source'];
+        $secret = secret_key($input['source']) ?? $input['secret'] ?? '';
 
         // 获取数据
         $body = json_decode($input['body'], true);
 
         // 从缓存获取订单详情
-        $detail = $this->baidu->detailFromCache($body['order_id'], $source);
+        $detail = $this->baidu->detailFromCache($body['order_id'], $source, $secret);
+
+        // 获取订单详情接口
+        if ($getDetail) {
+            return $detail;
+        }
 
         $this->baidu->shop_id = $detail['data']['shop']['baidu_shop_id'];
         $shop = $this->baidu->shopInfoFromCache(
             $this->baidu->shop_id
         );
+
         $data['order_id'] = $detail['data']['order']['order_id'];
         $data['source'] = $source;
 
@@ -55,6 +65,18 @@ class OrderController extends Controller
 
         $res = $this->baidu->setAuth($source)->buildRes('resp.order.create', compact('source_order_id'), 0);
         return $res;
+    }
+
+    public function reprint($orderId)
+    {
+        $order = Record::orderId($orderId)->first();
+        $shop = $order->shop;
+
+        // 订单不存在
+        if (is_null($order)) {
+            //
+        }
+        dd();
     }
 
     public function __call($method, $parameters)

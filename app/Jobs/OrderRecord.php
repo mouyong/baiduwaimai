@@ -32,10 +32,9 @@ class OrderRecord implements ShouldQueue
      */
     public function handle()
     {
-        $data = Record::orderId($this->data['order_id'])->first();
-        if ($data) {
-            $duplicate_count = $data['duplicate_count'] + 1;
-            Record::orderId($this->data['order_id'])->update(compact('duplicate_count'));
+        $record = Record::orderId($this->data['order_id'])->first();
+        if ($record) {
+            $record->increment('duplicate_count');
         } else {
             Record::create($this->data);
         }

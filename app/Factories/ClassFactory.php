@@ -17,7 +17,8 @@ class ClassFactory
                 break;
             case 'order.confirm':
                 $source = Input::get('source');
-                $order_id = Input::get('order_id');
+                $order_id = json_decode(Input::get('body'))->order_id;
+                
                 return $order->confirm($source, $order_id);
                 break;
             case 'order.cancel':
