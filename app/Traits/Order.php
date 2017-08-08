@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use App\Jobs\PrintOrder;
 use App\Jobs\OrderRecord;
+use App\Jobs\StatusPush;
 use Illuminate\Support\Facades\Input;
 
 trait Order
@@ -82,18 +83,27 @@ trait Order
                 return self::statusGet(Input::get('order_id'), $source);
                 break;
             case 'order.status.push':
-                return self::statusPush(json_decode(Input::get('body'), true), $source);
+                return $this->respStatusPush($source);
                 break;
         }
     }
 
-    private function statusGet($order_id, $source)
+    public function respStatusPush($source)
+    {
+        $body = json_decode(Input::get('body'), true);
+        dispatch((new StatusPush($body, $source))->onQueue('statusPush'));
+        $data['errno'] = 0;
+        $data['error'] = 'success';
+        return $this->setAuth($source)->buildCmd('resp.order.status.push', $data, 0);
+    }
+
+    public function statusGet($order_id, $source)
     {
         $param = $this->setAuth($source)->buildCmd('order.status.get', compact('order_id'));
         return self::send($param);
     }
 
-    private function statusPush($body, $source)
+    public function statusPush($body, $source)
     {
         // 获取订单详情
         $detail = self::detailFromCache($body['order_id'], $source);
