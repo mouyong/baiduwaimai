@@ -320,10 +320,10 @@ class Baidu
      * @param string $cache_key
      * @return mixed
      */
-    public function shopInfoFromCache($data = null, $expire = 1440, $cache_key = 'bdwm:shop:')
+    public function shopInfoFromCache($data = null, $expire = 1440, $cache_key = 'shop:yilianyun:')
     {
         $cache_key .= $this->shop_id;
-        return \Cache::remember($cache_key, $expire, function () use ($data) {
+        $data = \Cache::remember($cache_key, $expire, function () use ($data) {
             if (is_array($data)) {
                 return $data;
             }
@@ -332,5 +332,11 @@ class Baidu
                 return $res['data'];
             }
         });
+
+        if (is_null($data)) {
+            \Cache::forget($cache_key);
+        }
+
+        return $data;
     }
 }

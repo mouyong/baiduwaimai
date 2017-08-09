@@ -41,11 +41,11 @@ trait Order
     {
         $source = Input::get('source');
 
-        $body['order_id'] = json_decode(Input::get('body'), true)['order_id'];
+        $body['order_id'] = json_decode(Input::get('body'))->order_id;
         $body['type'] = $type;
         $body['reason '] = $reason;
 
-        $cache_key = 'bdwm:order:' . $body['order_id'];
+        $cache_key = 'order:' . $body['order_id'];
         if (\Cache::has($cache_key)) {
             \Cache::forget($cache_key);
         }
@@ -62,7 +62,7 @@ trait Order
      */
     public function complete()
     {
-        $order_id = Input::get('order_id');
+        $order_id = json_decode(Input::get('body'))->order_id;
         $source = Input::get('source');
 
         $param = $this->setAuth($source)->buildCmd('order.complete', compact('order_id'));
@@ -92,6 +92,8 @@ trait Order
     {
         $body = json_decode(Input::get('body'), true);
         dispatch((new StatusPush($body, $source))->onQueue('statusPush'));
+        // self::statusPush($body, $source);
+
         $data['errno'] = 0;
         $data['error'] = 'success';
         return $this->setAuth($source)->buildCmd('resp.order.status.push', $data, 0);
@@ -142,8 +144,8 @@ trait Order
 
     private function cleanOrder($order_id)
     {
-        if (\Cache::has('bdwm:order:'.$order_id)) {
-            \Cache::forget('bdwm:order:'.$order_id);
+        if (\Cache::has('order:'.$order_id)) {
+            \Cache::forget('order:'.$order_id);
         }
     }
 
@@ -172,7 +174,7 @@ trait Order
         return $content;
     }
 
-    private function printer($shopInfo, $detail, $order_id, $source, $isPrinter = true)
+    public function printer($shopInfo, $detail, $order_id, $source, $isPrinter = true)
     {
         // 检查是否有绑定打印机
         self::checkPrinter($shopInfo, $source);
@@ -251,9 +253,15 @@ trait Order
 
     public function loadShopFrom($baidu_shop_id, $source)
     {
-        return \Cache::remember('baidu:shop:detail:' . $baidu_shop_id, $this->expire, function () use ($baidu_shop_id, $source) {
+        $data = \Cache::remember('shop:detail:' . $baidu_shop_id, $this->expire, function () use ($baidu_shop_id, $source) {
             return app('baidu', (array) $source)->getShopInfo($baidu_shop_id)['body']['data'];
         });
+
+        if (is_null($data)) {
+            \Cache::forget($cache_key);
+        }
+
+        return $data;
     }
 
     /**
@@ -265,7 +273,7 @@ trait Order
      * @param string $cache_key
      * @return mixed
      */
-    public function detailFromCache($order_id, $source, $secret = '', $cache_key = 'bdwm:order:')
+    public function detailFromCache($order_id, $source, $secret = '', $cache_key = 'order:')
     {
         if (!$order_id) {
             throw new \InvalidArgumentException('Parameter missing order id');
@@ -275,7 +283,7 @@ trait Order
         if (!empty($secret)) {
             \Cache::forget($cache_key);
         }
-        return \Cache::remember($cache_key, $this->expire, function () use ($order_id, $source, $secret) {
+        $data = \Cache::remember($cache_key, $this->expire, function () use ($order_id, $source, $secret) {
             $auth = empty($secret) ? self::setAuth($source) : self::source($source)->secret_key($secret);
             
             $response = self::send(
@@ -288,6 +296,12 @@ trait Order
 
             throw new \RuntimeException('No order detail were obtained：order_id = ' . $order_id);
         });
+
+        if (is_null($data)) {
+            \Cache::forget($cache_key);
+        }
+
+        return $data;
     }
 
     /**

@@ -112,7 +112,7 @@ function offset(&$str, array $offset, $delimiter = '-')
 
  function font_size($key)
  {
-     $font['confirm_time'] = 1; // 下单时间字体大小
+    $font['confirm_time'] = 1; // 下单时间字体大小
     $font['order_id'] = 1; // 订单号字体大小
     $font['address'] = 2; // 收货人地址字体大小
     $font['info'] = 2; // 收货信息字体大小
@@ -123,7 +123,7 @@ function offset(&$str, array $offset, $delimiter = '-')
 
     $font['default'] = 2;
 
-     return $font[$key];
+    return $font[$key];
  }
 
 function uuid($offset = [8,12,16,20])
@@ -172,7 +172,7 @@ function mb_substr_replace($string, $replacement, $start, $length = null)
     return join($smatches[0]);
 }
 
-function source($source, $source_info_key = 'bdwm:shop:')
+function source($source, $source_info_key = 'source:')
 {
     $info_key = $source_info_key . $source;
     $sourceInfo = sourceInfoFromCache($source, $info_key);
@@ -183,7 +183,7 @@ function source($source, $source_info_key = 'bdwm:shop:')
     return $sourceInfo['source'];
 }
 
-function secret_key($source, $source_info_key = 'bdwm:shop:')
+function secret_key($source, $source_info_key = 'source:')
 {
     $info_key = $source_info_key . $source;
     $sourceInfo = sourceInfoFromCache($source, $info_key);
@@ -194,9 +194,9 @@ function secret_key($source, $source_info_key = 'bdwm:shop:')
     return $sourceInfo['secret'];
 }
 
-function sourceInfoFromCache($source, $info_key)
+function sourceInfoFromCache($source, $info_key, $expire = 1440)
 {
-    return \Cache::rememberForever($info_key, function () use ($source) {
+    return \Cache::remember($info_key, $expire, function () use ($source) {
         $res = app('baidu')->send(compact('source'), source_info_url());
         if ($res['status'] == 0) {
             return $res['data'];
