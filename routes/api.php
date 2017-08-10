@@ -19,6 +19,8 @@ Route::post('/shop.authorized/{shop_id}/{source?}', 'BaiduController@authorized'
 
 Route::get('shop.create/{supplier_id}/{source}', 'BaiduController@shopCreate');
 Route::get('shop.update/{shop_id}/{source}', 'BaiduController@shopUpdate');
+Route::get('shop.open/{baidu_shop_id}/{source}', 'BaiduController@shopOpen');
+Route::get('shop.offline/{baidu_shop_id}/{source}', 'BaiduController@shopOffline');
 Route::get('shop.get/{shop_id}/{source}', 'BaiduController@shopGet');
 
 Route::get('shop.aptitude.upload/{shop_id}/{source}', 'BaiduController@aptitudeUpload');

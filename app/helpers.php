@@ -41,6 +41,11 @@ function no_upper_limit_source_info_url()
     return config('baidutakeout.baidu_no_upper_limit_source_info_url');
 }
 
+function status_push_url()
+{
+    return config('baidutakeout.status_push_url');
+}
+
 /**
  * 生成百度签名
  *
@@ -110,21 +115,21 @@ function offset(&$str, array $offset, $delimiter = '-')
     return $str;
 }
 
- function font_size($key)
- {
+function font_size($key)
+{
     $font['confirm_time'] = 1; // 下单时间字体大小
-    $font['order_id'] = 1; // 订单号字体大小
-    $font['address'] = 2; // 收货人地址字体大小
-    $font['info'] = 2; // 收货信息字体大小
-    $font['remark'] = 2; // 备注字体大小
-    $font['table'] = 2; // 商品字体大小
-    $font['mn'] = 1; // 多联设置
-    $font['ad1'] = null; // 自定义广告语
-
-    $font['default'] = 2;
+    $font['order_id']     = 1; // 订单号字体大小
+    $font['address']      = 2; // 收货人地址字体大小
+    $font['info']         = 2; // 收货信息字体大小
+    $font['remark']       = 2; // 备注字体大小
+    $font['table']        = 2; // 商品字体大小
+    $font['mn']           = 1; // 多联设置
+    $font['ad1']          = null; // 自定义广告语
+    
+    $font['default']      = 2;
 
     return $font[$key];
- }
+}
 
 function uuid($offset = [8,12,16,20])
 {

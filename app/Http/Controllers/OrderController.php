@@ -80,6 +80,17 @@ class OrderController extends Controller
     {
         $data = $this->getDetail($orderId);
         if (empty($data)) {
+            $args = [
+                'cmd' => 'shop.status.push',
+                'body' => [
+                    'order_id' => $orderId,
+                    'status' => 5,
+                ],
+            ];
+
+            // $res = $this->baidu->send($args, status_push_url());
+            // dd($args, $res);
+
             return response()->json([
                 'errno' => 404,
                 'error' => 'order not found',

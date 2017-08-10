@@ -35,6 +35,22 @@ trait KaTestShop
         dd($res);
     }
 
+    public function shopOpen($baidu_shop_id, $source)
+    {
+        $args = $this->setAuth($source)->buildCmd('shop.open', compact('baidu_shop_id'));
+        // dd($args);
+        $res = $this->send($args);
+        dd($res);
+    }
+
+    public function shopOffline($baidu_shop_id, $source)
+    {
+        $args = $this->setAuth($source)->buildCmd('shop.offline', compact('baidu_shop_id'));
+        // dd($args);
+        $res = $this->send($args);
+        dd($res);
+    }
+
     public function shopGet($shop_id, $source)
     {
         $args = $this->setAuth($source)->buildCmd('shop.get', compact('shop_id'));
