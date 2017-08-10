@@ -25,6 +25,6 @@ class ShopController extends Controller
         ];
 
         $args = $this->baidu->setAuth($source)->buildCmd('resp.shop.status.push', $body);
-        $this->baidu->send($args);
+        return $args;
     }
 }
