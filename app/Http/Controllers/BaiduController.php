@@ -98,6 +98,11 @@ class BaiduController extends Controller
         return $this->baidu->shopOffline($baidu_shop_id, $source);
     }
 
+    public function shopClose($baidu_shop_id, $source)
+    {
+        return $this->baidu->shopClose($baidu_shop_id, $source);
+    }
+
     public function shopGet($shop_id, $source)
     {
         return $this->baidu->shopGet($shop_id, $source);
