@@ -4,6 +4,7 @@ namespace App\Factories;
 
 use Illuminate\Support\Facades\Input;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ShopController;
 
 class ClassFactory
 {
@@ -33,6 +34,11 @@ class ClassFactory
                 break;
             case 'order.get':
                 return $order->detail();
+                break;
+            case 'shop.status.push':
+                $shop = app(ShopController::class);
+                
+                return $shop->respStatusPush();
                 break;
             default:
                 $tips = '你不担心我封你 ip 吗？注意一点哦，你的 ip 已被记录';
