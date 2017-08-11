@@ -35,24 +35,24 @@ $delivery_region_region = [
     ],
     [
         [
-            'longitude' => 101.953192,
-            'latitude' => 32.862984,
+            'longitude' => '101.953192',
+            'latitude' => '32.862984',
         ],
         [
-            'longitude' => 101.879603,
-            'latitude' => 28.994299,
+            'longitude' => '101.879603',
+            'latitude' => '28.994299',
         ],
         [
-            'longitude' => 108.576219,
-            'latitude' => 29.12362,
+            'longitude' => '108.576219',
+            'latitude' => '29.12362',
         ],
         [
-            'longitude' => 108.429041,
-            'latitude' => 33.111072,
+            'longitude' => '108.429041',
+            'latitude' => '33.111072',
         ],
         [
-            'longitude' => 106.147776,
-            'latitude' => 33.481882,
+            'longitude' => '106.147776',
+            'latitude' => '33.481882',
         ],
     ],
 ];

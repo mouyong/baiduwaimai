@@ -76,68 +76,68 @@ class BaiduController extends Controller
         return $this->baidu->getShopResponse($response);
     }
 
-    public function shopCreate($supplier_id, $source)
+    public function shopCreate($supplier_id, $source, $secret)
     {
         $this->baidu->setTestShop($supplier_id);
-        return $this->baidu->shopCreate($source);
+        return $this->baidu->shopCreate($source, $secret);
     }
 
-    public function shopUpdate($shop_id, $source)
+    public function shopUpdate($shop_id, $source, $secret)
     {
         $this->baidu->setTestShop($shop_id);
-        return $this->baidu->shopUpdate($source);
+        return $this->baidu->shopUpdate($source, $secret);
     }
 
-    public function shopOpen($baidu_shop_id, $source)
+    public function shopOpen($baidu_shop_id, $source, $secret)
     {
-        return $this->baidu->shopOpen($baidu_shop_id, $source);
+        return $this->baidu->shopOpen($baidu_shop_id, $source, $secret);
     }
 
-    public function shopOffline($baidu_shop_id, $source)
+    public function shopOffline($baidu_shop_id, $source, $secret)
     {
-        return $this->baidu->shopOffline($baidu_shop_id, $source);
+        return $this->baidu->shopOffline($baidu_shop_id, $source, $secret);
     }
 
-    public function shopClose($baidu_shop_id, $source)
+    public function shopClose($baidu_shop_id, $source, $secret)
     {
-        return $this->baidu->shopClose($baidu_shop_id, $source);
+        return $this->baidu->shopClose($baidu_shop_id, $source, $secret);
     }
 
-    public function shopGet($shop_id, $source)
+    public function shopGet($shop_id, $source, $secret)
     {
-        return $this->baidu->shopGet($shop_id, $source);
+        return $this->baidu->shopGet($shop_id, $source, $secret);
     }
 
-    public function aptitudeGet($shop_id, $source)
+    public function aptitudeGet($shop_id, $source, $secret)
     {
-        return $this->baidu->aptitudeGet($shop_id, $source);
+        return $this->baidu->aptitudeGet($shop_id, $source, $secret);
     }
 
-    public function aptitudeUpload($shop_id, $source)
+    public function aptitudeUpload($shop_id, $source, $secret)
     {
         $this->baidu->setAptitude($shop_id);
-        return $this->baidu->aptitudeUpload($source);
+        return $this->baidu->aptitudeUpload($source, $secret);
     }
 
-    public function dishCreate($shop_id, $source)
+    public function dishCreate($shop_id, $source, $secret)
     {
         $this->baidu->setDish($shop_id);
-        return $this->baidu->dishCreate($source);
+        return $this->baidu->dishCreate($source, $secret);
     }
 
-    public function dishUpdate($shop_id, $source)
+    public function dishUpdate($shop_id, $source, $secret)
     {
         $this->baidu->setDish($shop_id);
-        return $this->baidu->dishUpdate($source);
+        return $this->baidu->dishUpdate($source, $secret);
     }
 
-    public function dishMenu($shop_id, $source)
+    public function dishMenu($shop_id, $source, $secret)
     {
-        return $this->baidu->dishMenu($shop_id, $source);
+        return $this->baidu->dishMenu($shop_id, $source, $secret);
     }
 
-    public function dishOnline($shop_id, $dish_id, $source)
+    public function dishOnline($shop_id, $dish_id, $source, $secret)
     {
-        return $this->baidu->dishOnline($shop_id, $dish_id, $source);
+        return $this->baidu->dishOnline($shop_id, $dish_id, $source, $secret);
     }
 }

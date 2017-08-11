@@ -251,13 +251,13 @@ class Baidu
         return $this->api_url;
     }
 
-    protected function source($source)
+    public function source($source)
     {
         $this->source = $source;
         return $this;
     }
 
-    protected function secret_key($secret_key)
+    public function secret_key($secret_key)
     {
         $this->secret = $secret_key;
         return $this;

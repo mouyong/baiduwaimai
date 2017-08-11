@@ -17,35 +17,35 @@ trait Dish
         return $this->dish;
     }
 
-    public function dishCreate($source)
+    public function dishCreate($source, $secret)
     {
         $dish = $this->getDish();
-        $args = $this->setAuth($source)->buildCmd('dish.create', $dish);
+        $args = $this->source($source)->secret_key($secret)->buildCmd('dish.create', $dish);
         // dd($args);
         $res = $this->send($args);
         dd($res);
     }
 
-    public function dishUpdate($source)
+    public function dishUpdate($source, $secret)
     {
         $dish = $this->getDish();
-        $args = $this->setAuth($source)->buildCmd('dish.update', $dish);
+        $args = $this->source($source)->secret_key($secret)->buildCmd('dish.update', $dish);
         // dd($args);
         $res = $this->send($args);
         dd($res);
     }
 
-    public function dishMenu($shop_id, $source)
+    public function dishMenu($shop_id, $source, $secret)
     {
-        $args = $this->setAuth($source)->buildCmd('dish.menu.get', compact('shop_id'));
+        $args = $this->source($source)->secret_key($secret)->buildCmd('dish.menu.get', compact('shop_id'));
         // dd($args);
         $res = $this->send($args);
         dd($res);
     }
 
-    public function dishOnline($shop_id, $dish_id, $source)
+    public function dishOnline($shop_id, $dish_id, $source, $secret)
     {
-        $args = $this->setAuth($source)->buildCmd('dish.online', compact('shop_id', 'dish_id'));
+        $args = $this->source($source)->secret_key($secret)->buildCmd('dish.online', compact('shop_id', 'dish_id'));
         // dd($args);
         $res = $this->send($args);
         dd($res);

@@ -17,6 +17,8 @@ class ShopController extends Controller
     public function respStatusPush()
     {
         $source = Input::get('source');
+        $secret = secret_key($source);
+        if ($source == 64475) $secret = '1096bebd4fc8a45d';
 
         $body = [
             'errno' => 0,
@@ -24,7 +26,7 @@ class ShopController extends Controller
             'data' => '',
         ];
 
-        $args = $this->baidu->setAuth($source)->buildCmd('resp.shop.status.push', $body, 0);
+        $args = $this->baidu->source($source)->secret_key($secret)->buildCmd('resp.shop.status.push', $body, 0);
         return $args;
     }
 }
